@@ -11,8 +11,9 @@ load_dotenv()
 app = FastAPI()
 
 FRONTEND_URL=os.getenv("BOOKIFY_FRONTEND_URL")
+EXTRA_URL=os.getenv("EXTRA_FRONTEND_URL")
 
-origins = [FRONTEND_URL]
+origins = [FRONTEND_URL,EXTRA_URL]
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,7 +25,7 @@ app.add_middleware(
 
 @app.get("/")
 def main():
-    return {f"Hello From Main!"}
+    return True
 
 
 @app.post("/extract-text")
