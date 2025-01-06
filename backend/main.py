@@ -1,9 +1,9 @@
 import os
-import uvicorn
-from fastapi import FastAPI, File, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
-import fitz # PyMuPDF
+import uvicorn # type: ignore
+from fastapi import FastAPI, File, UploadFile # type: ignore
+from fastapi.middleware.cors import CORSMiddleware # type: ignore
+from dotenv import load_dotenv # type: ignore
+import fitz # type: ignore # PyMuPDF
 # import pdfplumber
 
 load_dotenv()
