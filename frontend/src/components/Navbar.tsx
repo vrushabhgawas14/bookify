@@ -39,7 +39,7 @@ export default function Navbar() {
             <div
               className={`lg:text-lg font-semibold ${
                 isOpen
-                  ? "flex flex-col text-3xl mt-32 md:mt-24 justify-start items-center space-y-6"
+                  ? "flex flex-col text-2xl mt-32 md:mt-24 justify-start items-center space-y-6"
                   : "space-x-8"
               }`}
             >
@@ -49,22 +49,24 @@ export default function Navbar() {
                   to={item.url}
                   className={`${
                     isOpen &&
-                    "bg-white p-4 px-8 rounded-xl w-60 text-center shadow-md shadow-slate-800"
+                    "bg-white p-2 px-8 rounded-xl w-60 text-center shadow-md shadow-slate-800"
                   }`}
                 >
                   {item.title}
                 </Link>
               ))}
             </div>
-            <div className="flex sm:flex-col sm:space-y-4 lg:space-x-4 items-center lg:text-xl text-2xl font-semibold">
-              <button className="bg-white p-1 px-8 rounded-xl text-center border-2 border-black sm:p-4 sm:px-8">
+            {/* Login And Registration */}
+            <div className="flex sm:flex-col sm:space-y-4 lg:space-x-4 items-center lg:text-xl text-xl font-semibold">
+              <button className="bg-white p-1 px-8 rounded-xl text-center border-2 border-black sm:p-2 sm:px-8">
                 Login
               </button>
-              <button className="bg-white p-1 px-8 rounded-xl text-center border-2 border-black sm:p-4 sm:px-8">
+              <button className="bg-white p-1 px-8 rounded-xl text-center border-2 border-black sm:p-2 sm:px-8">
                 SignUp
               </button>
             </div>
           </div>
+          {/* Hamburger Menu */}
           <div className="lg:hidden sm:w-auto z-30 fixed right-6">
             <button
               className="w-6 h-6"
