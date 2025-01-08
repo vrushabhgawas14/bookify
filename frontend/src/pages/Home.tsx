@@ -58,7 +58,9 @@ export default function Home() {
       <main>
         <div className="flex flex-col justify-center items-center h-[40vh]">
           <header className="text-3xl">Hello Vrushabh</header>
-          <div onClick={loadBackend}>Load Backend</div>
+          <div onClick={loadBackend} className="cursor-pointer">
+            Load Backend
+          </div>
           <form
             onSubmit={handleSubmit}
             className="flex flex-col justify-center items-center py-10 space-y-2"
