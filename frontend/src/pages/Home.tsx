@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { api } from "../api";
+import { useAuth } from "../context/authContext";
 
 export default function Home() {
   const [file, setFile] = useState(null);
   const [extractedText, setExtractedText] = useState("");
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleFileChange = (e: any) => {
     setFile(e.target.files[0]);
@@ -57,7 +59,9 @@ export default function Home() {
     <>
       <main>
         <div className="flex flex-col justify-center items-center h-[40vh]">
-          <header className="text-3xl">Hello Vrushabh</header>
+          <header className="text-3xl">
+            Hello {user ? user.email : "Guest"}
+          </header>
           <div onClick={loadBackend} className="cursor-pointer">
             Load Backend
           </div>

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { NavbarDetails } from "../constants/NavbarDetails";
+import { NavbarAuthButton, NavbarDetails } from "../constants/NavbarDetails";
 import { useState } from "react";
+import { useAuth } from "../context/authContext";
 
 export default function Navbar() {
   const hamburgerMenu = {
@@ -19,6 +20,7 @@ export default function Navbar() {
     ),
   };
 
+  const { userLoggedIn } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   let hamburger = hamburgerMenu.bar;
   hamburger = isOpen ? hamburgerMenu.cross : hamburgerMenu.bar;
@@ -57,13 +59,29 @@ export default function Navbar() {
               ))}
             </div>
             {/* Login And Registration */}
-            <div className="flex sm:flex-col sm:space-y-4 lg:space-x-4 items-center lg:text-xl text-xl font-semibold">
-              <button className="bg-white p-1 px-8 rounded-xl text-center border-2 border-black sm:p-2 sm:px-8">
-                Login
-              </button>
-              <button className="bg-white p-1 px-8 rounded-xl text-center border-2 border-black sm:p-2 sm:px-8">
-                SignUp
-              </button>
+            <div className="flex sm:flex-col sm:space-y-4 lg:space-x-4 items-center font-semibold">
+              {userLoggedIn ? (
+                <>
+                  <Link
+                    to={"/profile"}
+                    className="bg-white hover:bg-slate-100 text-xl hover:text-black p-1 px-8 rounded-xl text-center border-2 border-black sm:p-2 sm:px-8"
+                  >
+                    Profile
+                  </Link>
+                </>
+              ) : (
+                <>
+                  {NavbarAuthButton.map((item, i) => (
+                    <Link
+                      key={i}
+                      to={item.url}
+                      className="bg-white hover:bg-slate-100 text-xl hover:text-black p-1 px-8 rounded-xl text-center border-2 border-black sm:p-2 sm:px-8"
+                    >
+                      {item.title}
+                    </Link>
+                  ))}
+                </>
+              )}
             </div>
           </div>
           {/* Hamburger Menu */}

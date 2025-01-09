@@ -20,3 +20,14 @@ export const NavbarDetails = [
     url: "/library",
   },
 ];
+
+export const NavbarAuthButton = [
+  {
+    title: "Login",
+    url: "/login",
+  },
+  {
+    title: "Register",
+    url: "/register",
+  },
+];
