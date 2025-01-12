@@ -100,9 +100,11 @@ export default function Home() {
     };
 
     window.addEventListener("wheel", handleScrollWheel);
+    window.addEventListener("touchmove", handleScrollWheel);
 
     return () => {
       window.removeEventListener("wheel", handleScrollWheel);
+      window.removeEventListener("touchmove", handleScrollWheel);
     };
   }, []);
 
