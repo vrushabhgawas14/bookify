@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../api";
 import { useAuth } from "../context/authContext";
 
@@ -8,6 +8,16 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const [displayedText, setDisplayedText] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const isUserScrollingRef = useRef(isUserScrolling);
+  const sparkles = (
+    <svg fill="#000000" viewBox="0 0 512 512">
+      <path d="M208,512,155.62,372.38,16,320l139.62-52.38L208,128l52.38,139.62L400,320,260.38,372.38Z"></path>
+      <path d="M88,176,64.43,111.57,0,88,64.43,64.43,88,0l23.57,64.43L176,88l-64.43,23.57Z"></path>
+      <path d="M400,256l-31.11-80.89L288,144l80.89-31.11L400,32l31.11,80.89L512,144l-80.89,31.11Z"></path>
+    </svg>
+  );
 
   const handleFileChange = (e: any) => {
     setFile(e.target.files[0]);
@@ -57,6 +67,10 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    isUserScrollingRef.current = isUserScrolling;
+  }, [isUserScrolling]);
+
   // Text generating effect
   useEffect(() => {
     if (!extractedText) return;
@@ -65,8 +79,11 @@ export default function Home() {
     let currIndex = 0;
 
     const interval = setInterval(() => {
-      setDisplayedText((prev) => prev + (prev ? " " : "") + words[currIndex]);
-      currIndex++;
+      setDisplayedText((prev) => prev + (prev ? " " : "") + words[currIndex++]);
+
+      if (!isUserScrollingRef.current) {
+        containerRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
 
       if (currIndex >= words.length - 1) {
         clearInterval(interval);
@@ -76,13 +93,18 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [extractedText]);
 
-  const sparkles = (
-    <svg fill="#000000" viewBox="0 0 512 512">
-      <path d="M208,512,155.62,372.38,16,320l139.62-52.38L208,128l52.38,139.62L400,320,260.38,372.38Z"></path>
-      <path d="M88,176,64.43,111.57,0,88,64.43,64.43,88,0l23.57,64.43L176,88l-64.43,23.57Z"></path>
-      <path d="M400,256l-31.11-80.89L288,144l80.89-31.11L400,32l31.11,80.89L512,144l-80.89,31.11Z"></path>
-    </svg>
-  );
+  useEffect(() => {
+    // Stop Auto Scrolling Effect With Mouse Wheel
+    const handleScrollWheel = () => {
+      setIsUserScrolling(true);
+    };
+
+    window.addEventListener("wheel", handleScrollWheel);
+
+    return () => {
+      window.removeEventListener("wheel", handleScrollWheel);
+    };
+  }, []);
 
   return (
     <>
@@ -128,12 +150,13 @@ export default function Home() {
                   <h2 className="text-xl">Copy</h2>
                 </div>
               </header>
-              <div className="px-10 py-8">
+              <div className="px-10 py-8 sm:px-5 sm:py-6">
                 {loading ? (
                   <div className="text-center text-2xl">Loading...</div>
                 ) : (
-                  <div className="text-justify text-2xl font-serif">
+                  <div className="text-justify text-2xl sm:text-xl font-serif">
                     {displayedText}
+                    <div ref={containerRef}></div>
                   </div>
                 )}
               </div>
