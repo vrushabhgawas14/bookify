@@ -13,11 +13,7 @@ export default function Register() {
       const email = await formData.get("userEmail")?.toString().toLowerCase();
       const password = await formData.get("userPassword")?.toString();
 
-      const userCredentials = await registerUserWithEmailAndPassword(
-        email!,
-        password!
-      );
-      alert(`User Registered Successfully! ${userCredentials.user}`);
+      await registerUserWithEmailAndPassword(email!, password!);
     } catch (error) {
       alert(`Error registering user: ${error}`);
       console.log(error);
