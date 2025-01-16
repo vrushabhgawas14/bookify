@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
+html::-webkit-scrollbar {
+  width: 0.8rem;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-900 rounded-xl;
+}
+
 .toggleNav {
-  @apply fixed top-0 left-1/2 -translate-x-1/2 flex-col h-full z-20 space-y-10 sm:p-4 backdrop-blur-sm;
+  @apply fixed top-0 left-1/2 -translate-x-1/2 flex-col h-full z-40 space-y-10 sm:p-4 backdrop-blur-sm;
+}
+
+.answer-rendering::-webkit-scrollbar {
+  width: 0.8rem;
+}
+
+.answer-rendering::-webkit-scrollbar-thumb {
+  @apply bg-slate-800 bg-opacity-70 rounded-xl cursor-pointer;
 }

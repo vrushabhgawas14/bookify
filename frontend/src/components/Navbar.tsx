@@ -28,7 +28,7 @@ export default function Navbar() {
     <>
       <nav className="relative">
         <section className="h-16 w-full flex justify-between px-10 sm:px-4 items-center fixed border-b-2 border-black bg-white">
-          <div className="text-3xl font-semibold z-30">
+          <div className="text-3xl font-semibold z-50">
             <Link to="/">Bookify</Link>
           </div>
           <div
@@ -85,7 +85,7 @@ export default function Navbar() {
             </div>
           </div>
           {/* Hamburger Menu */}
-          <div className="lg:hidden sm:w-auto z-30 fixed right-6">
+          <div className="lg:hidden sm:w-auto z-50 fixed right-6">
             <button
               className="w-6 h-6"
               onClick={() => setIsOpen(!isOpen)}
