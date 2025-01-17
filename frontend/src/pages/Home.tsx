@@ -12,6 +12,10 @@ export default function Home() {
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const isUserScrollingRef = useRef(isUserScrolling);
   const [selectedFileName, setSelectedFileName] = useState("");
+  const [isTextExtracting, setIsTextExtracting] = useState(false);
+  const [progressText, setProgressText] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [errorMessage, setErrorMessage] = useState("");
   const sparkles = (
     <svg fill="#000000" viewBox="0 0 512 512">
       <path d="M208,512,155.62,372.38,16,320l139.62-52.38L208,128l52.38,139.62L400,320,260.38,372.38Z"></path>
@@ -20,19 +24,31 @@ export default function Home() {
     </svg>
   );
 
+  // When File is Selected
   const handleFileChange = (e: any) => {
-    const myFile = e.target.files[0];
+    const myFile = e.target.files?.[0];
     if (myFile) {
       setFile(myFile);
       setSelectedFileName(myFile.name);
+      setErrorMessage("");
     }
   };
 
+  // Reseting Selected File
+  const resetFileInput = () => {
+    setFile(null);
+    setSelectedFileName("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  // Submission of PDF to Backend
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (!file) {
-      alert("Upload a PDF File");
+      setErrorMessage("Upload a PDF File");
       return;
     } else {
       setLoading(true);
@@ -50,12 +66,15 @@ export default function Home() {
 
       setExtractedText(response.data.text);
       setLoading(false);
+      setErrorMessage("");
     } catch (error) {
       console.error("Error: ", error);
-      alert("Something Went Wrong!");
+      setErrorMessage("Something Went Wrong, Try Again!");
+      setLoading(false);
     }
   };
 
+  // UseRef for checking scroll status in div box
   useEffect(() => {
     isUserScrollingRef.current = isUserScrolling;
   }, [isUserScrolling]);
@@ -66,16 +85,18 @@ export default function Home() {
 
     const words = extractedText.split(" ");
     let currIndex = 0;
+    setIsTextExtracting(true);
 
     const interval = setInterval(() => {
       setDisplayedText((prev) => prev + (prev ? " " : "") + words[currIndex++]);
 
-      if (!isUserScrollingRef.current) {
-        containerRef.current?.scrollIntoView({ behavior: "smooth" });
+      if (containerRef.current && !isUserScrollingRef.current) {
+        containerRef.current.scrollTop = containerRef.current.scrollHeight;
       }
 
       if (currIndex >= words.length - 1) {
         clearInterval(interval);
+        setIsTextExtracting(false);
       }
     }, 40);
 
@@ -88,14 +109,33 @@ export default function Home() {
       setIsUserScrolling(true);
     };
 
-    window.addEventListener("wheel", handleScroll);
-    window.addEventListener("touchmove", handleScroll);
+    containerRef.current?.addEventListener("wheel", handleScroll);
+    containerRef.current?.addEventListener("touchmove", handleScroll);
 
     return () => {
-      window.removeEventListener("wheel", handleScroll);
-      window.removeEventListener("touchmove", handleScroll);
+      containerRef.current?.removeEventListener("wheel", handleScroll);
+      containerRef.current?.removeEventListener("touchmove", handleScroll);
     };
   }, []);
+
+  // Output Processing Text
+  useEffect(() => {
+    const defaultText = "Answer";
+    const generatingText = "Generating Summary...";
+
+    const words = isTextExtracting ? generatingText : defaultText;
+    let currIndex = 0;
+    setProgressText("");
+    const interval = setInterval(() => {
+      setProgressText((prev) => prev + words[currIndex++]);
+
+      if (currIndex >= words.length - 1) {
+        clearInterval(interval);
+      }
+    }, 70);
+
+    return () => clearInterval(interval);
+  }, [isTextExtracting]);
 
   return (
     <>
@@ -104,6 +144,7 @@ export default function Home() {
           <header className="text-3xl text-center sm:text-xl">
             Hello {user ? user.email : "Guest"} !
           </header>
+          {/* Input Section */}
           <form
             onSubmit={handleSubmit}
             className="flex justify-between sm:justify-around items-center mt-10 p-2 rounded-2xl space-x-2 border-2 border-black px-4 sm:w-[90vw]"
@@ -114,20 +155,35 @@ export default function Home() {
                 accept="application/pdf"
                 id="file-input"
                 onChange={handleFileChange}
+                ref={fileInputRef}
                 className="hidden"
               />
-              <label htmlFor="file-input" className="cursor-pointer">
-                <svg
-                  // xmlns="http://www.w3.org/2000/svg"
-                  className="h-10 w-10"
-                  viewBox="0 0 48 48"
+              {!file ? (
+                <label htmlFor="file-input" className="cursor-pointer">
+                  <svg
+                    // xmlns="http://www.w3.org/2000/svg"
+                    className="h-10 w-10"
+                    viewBox="0 0 48 48"
+                  >
+                    <path d="M 12.5 5 C 8.3754991 5 5 8.3754991 5 12.5 L 5 30.5 C 5 34.624501 8.3754991 38 12.5 38 L 30.5 38 C 34.624501 38 38 34.624501 38 30.5 L 38 12.5 C 38 8.3754991 34.624501 5 30.5 5 L 12.5 5 z M 12.5 8 L 30.5 8 C 33.003499 8 35 9.9965009 35 12.5 L 35 28.152344 L 29.75 23.072266 L 29.75 23.074219 C 29.015295 22.362375 28.049695 21.998844 27.09375 22 L 27.091797 22 C 26.136566 22.000488 25.176302 22.365751 24.445312 23.072266 A 1.50015 1.50015 0 0 0 24.443359 23.072266 L 22.345703 25.101562 L 17.150391 20.074219 C 16.416911 19.365243 15.450588 19.001953 14.496094 19.001953 C 13.5416 19.001953 12.577229 19.365243 11.84375 20.074219 L 8 23.792969 L 8 12.5 C 8 9.9965009 9.9965009 8 12.5 8 z M 40 11.513672 L 40 31.5 C 40 36.187 36.187 40 31.5 40 L 11.513672 40 C 12.883672 41.818 15.053 43 17.5 43 L 31.5 43 C 37.841 43 43 37.841 43 31.5 L 43 17.5 C 43 15.054 41.818 12.883672 40 11.513672 z M 27.5 13 A 2.5 2.5 0 0 0 27.5 18 A 2.5 2.5 0 0 0 27.5 13 z M 14.496094 22.001953 C 14.7036 22.001953 14.899932 22.071443 15.064453 22.230469 L 20.189453 27.1875 L 12.150391 34.964844 C 9.8163844 34.785918 8 32.883527 8 30.5 L 8 27.966797 L 13.929688 22.230469 C 14.094207 22.071444 14.288588 22.001953 14.496094 22.001953 z M 27.09375 25 A 1.50015 1.50015 0 0 0 27.095703 25 C 27.303134 24.999644 27.501258 25.07079 27.664062 25.228516 L 34.712891 32.048828 C 34.085865 33.775109 32.455428 35 30.5 35 L 16.427734 35 L 26.529297 25.228516 L 26.529297 25.230469 C 26.693865 25.071409 26.889612 25 27.09375 25 z"></path>
+                  </svg>
+                </label>
+              ) : (
+                <div
+                  onClick={resetFileInput}
+                  className="cursor-pointer p-2 mr-1 bg-gray-200 hover:bg-gray-200 hover:bg-opacity-45 rounded-lg border-2 border-slate-900"
                 >
-                  <path d="M 12.5 5 C 8.3754991 5 5 8.3754991 5 12.5 L 5 30.5 C 5 34.624501 8.3754991 38 12.5 38 L 30.5 38 C 34.624501 38 38 34.624501 38 30.5 L 38 12.5 C 38 8.3754991 34.624501 5 30.5 5 L 12.5 5 z M 12.5 8 L 30.5 8 C 33.003499 8 35 9.9965009 35 12.5 L 35 28.152344 L 29.75 23.072266 L 29.75 23.074219 C 29.015295 22.362375 28.049695 21.998844 27.09375 22 L 27.091797 22 C 26.136566 22.000488 25.176302 22.365751 24.445312 23.072266 A 1.50015 1.50015 0 0 0 24.443359 23.072266 L 22.345703 25.101562 L 17.150391 20.074219 C 16.416911 19.365243 15.450588 19.001953 14.496094 19.001953 C 13.5416 19.001953 12.577229 19.365243 11.84375 20.074219 L 8 23.792969 L 8 12.5 C 8 9.9965009 9.9965009 8 12.5 8 z M 40 11.513672 L 40 31.5 C 40 36.187 36.187 40 31.5 40 L 11.513672 40 C 12.883672 41.818 15.053 43 17.5 43 L 31.5 43 C 37.841 43 43 37.841 43 31.5 L 43 17.5 C 43 15.054 41.818 12.883672 40 11.513672 z M 27.5 13 A 2.5 2.5 0 0 0 27.5 18 A 2.5 2.5 0 0 0 27.5 13 z M 14.496094 22.001953 C 14.7036 22.001953 14.899932 22.071443 15.064453 22.230469 L 20.189453 27.1875 L 12.150391 34.964844 C 9.8163844 34.785918 8 32.883527 8 30.5 L 8 27.966797 L 13.929688 22.230469 C 14.094207 22.071444 14.288588 22.001953 14.496094 22.001953 z M 27.09375 25 A 1.50015 1.50015 0 0 0 27.095703 25 C 27.303134 24.999644 27.501258 25.07079 27.664062 25.228516 L 34.712891 32.048828 C 34.085865 33.775109 32.455428 35 30.5 35 L 16.427734 35 L 26.529297 25.228516 L 26.529297 25.230469 C 26.693865 25.071409 26.889612 25 27.09375 25 z"></path>
-                </svg>
-              </label>
+                  <svg viewBox="0 0 490 490" className="h-3 w-3" fill="black  ">
+                    <polygon
+                      points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 
+	489.292,457.678 277.331,245.004 489.292,32.337 "
+                    />
+                  </svg>
+                </div>
+              )}
             </div>
             {selectedFileName ? (
-              <div className="font-semibold w-60">
+              <div className="font-semibold w-64 sm:w-60 bg-slate-800 px-4 py-3 text-zinc-200 rounded-xl">
                 &quot;{selectedFileName}&quot; Selected.
               </div>
             ) : (
@@ -143,7 +199,7 @@ export default function Home() {
               className="text-white py-1 rounded-xl text-2xl"
             >
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                // xmlns="http://www.w3.org/2000/svg"
                 width="40"
                 height="40"
                 viewBox="0 0 512 512"
@@ -163,6 +219,11 @@ export default function Home() {
               </svg>
             </button>
           </form>
+          {errorMessage && (
+            <div className="mt-4 py-1 px-2 max-w-[80vw] text-center rounded-xl font-semibold text-red-600 border-2 border-black">
+              {errorMessage}
+            </div>
+          )}
         </div>
         {/* Output Section */}
         <section className="flex justify-center w-full">
@@ -170,7 +231,9 @@ export default function Home() {
             {/* Answer Text */}
             <div className="flex items-center space-x-4">
               <p className="h-6 w-6">{sparkles}</p>
-              <h2 className="text-3xl font-semibold">Answer</h2>
+              <h2 className="text-3xl font-semibold sm:text-2xl">
+                {progressText}
+              </h2>
             </div>
             {/* Actual Answer */}
             <div className="border-2 border-black rounded-xl bg-yellow-100">
@@ -181,14 +244,14 @@ export default function Home() {
                   <h2 className="text-xl">Copy</h2>
                 </div>
               </header>
-              <div className="answer-rendering px-10 py-8 sm:px-5 sm:py-6 overflow-y-scroll max-h-[60vh] sm:max-h-[40vh]">
+              <div
+                ref={containerRef}
+                className="answer-rendering px-10 py-8 sm:px-5 sm:py-6 overflow-y-scroll max-h-[60vh] sm:max-h-[40vh] text-justify text-2xl sm:text-xl font-serif"
+              >
                 {loading ? (
                   <div className="text-center text-2xl">Loading...</div>
                 ) : (
-                  <div className="text-justify text-2xl sm:text-xl font-serif">
-                    {displayedText}
-                    <div ref={containerRef}></div>
-                  </div>
+                  <>{displayedText}</>
                 )}
               </div>
             </div>

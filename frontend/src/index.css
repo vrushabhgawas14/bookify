@@ -18,6 +18,10 @@ html::-webkit-scrollbar {
   @apply fixed top-0 left-1/2 -translate-x-1/2 flex-col h-full z-40 space-y-10 sm:p-4 backdrop-blur-sm;
 }
 
+.answer-rendering {
+  scroll-behavior: smooth;
+}
+
 .answer-rendering::-webkit-scrollbar {
   width: 0.8rem;
 }
