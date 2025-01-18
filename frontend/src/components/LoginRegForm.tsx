@@ -23,11 +23,11 @@ export default function LoginRegistrationForm({
             {errorMessage}
           </h2>
         )}
-        <section className="flex flex-col items-center p-4 rounded-xl w-96 bg-slate-950">
+        <section className="flex flex-col items-center py-4 lg:px-6 rounded-xl sm:w-[90vw] bg-slate-950">
           <h1 className="text-3xl font-bold">
             {isLogin ? "Login" : "Registration"}
           </h1>
-          <div className="py-6 w-[95%] flex flex-col items-center space-y-2">
+          <div className="py-6 flex flex-col items-center space-y-2">
             <form
               onSubmit={handleSubmit}
               className="flex flex-col items-center space-y-4"
@@ -42,7 +42,7 @@ export default function LoginRegistrationForm({
                   type="text"
                   required
                   placeholder="john@gmail.com"
-                  className="px-2 pl-3 py-1 rounded-xl text-teal-900 outline-none"
+                  className="px-2 pl-3 py-1 sm:w-[50vw] rounded-xl text-teal-900 outline-none"
                 />
               </div>
               <div className="flex items-center justify-between w-full font-semibold space-x-4 pb-2">
@@ -58,7 +58,7 @@ export default function LoginRegistrationForm({
                   type="password"
                   required
                   placeholder="john@123"
-                  className="px-2 pl-3 py-1 rounded-xl text-teal-900 outline-none"
+                  className="px-2 pl-3 py-1 sm:w-[50vw] rounded-xl text-teal-900 outline-none"
                 />
               </div>
               <button
