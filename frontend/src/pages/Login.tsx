@@ -35,6 +35,8 @@ export default function Login() {
         setErrorMessage("Email or Password is Incorrect.");
       } else if (error.code === "auth/wrong-password") {
         setErrorMessage("Incorrect password. Please try again.");
+      } else if (error.code === "auth/network-request-failed") {
+        setErrorMessage("Network Error. Check Internet Connection!");
       } else {
         setErrorMessage("Error Login user: " + error.message);
       }

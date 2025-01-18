@@ -34,6 +34,8 @@ export default function Register() {
         setErrorMessage(
           "This email is already in use. Please use a different email."
         );
+      } else if (error.code === "auth/network-request-failed") {
+        setErrorMessage("Network Error. Check Internet Connection!");
       } else {
         setErrorMessage("Error registering user: " + error.message);
       }
