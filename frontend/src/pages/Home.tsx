@@ -24,6 +24,10 @@ export default function Home() {
       setFile(myFile);
       setSelectedFileName(myFile.name);
       setErrorMessage("");
+      if (displayedText) {
+        console.log("Result Reset Done!");
+        setDisplayedText("");
+      }
     }
   };
 
@@ -245,7 +249,7 @@ export default function Home() {
                 {loading ? (
                   <div className="text-center text-2xl">Loading...</div>
                 ) : (
-                  <>{displayedText}</>
+                  <p className="whitespace-pre-wrap text-xl">{displayedText}</p>
                 )}
               </div>
             </div>
