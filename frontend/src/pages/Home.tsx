@@ -44,30 +44,56 @@ export default function Home() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (!file) {
-      setErrorMessage("Upload a PDF File");
+    const formData = new FormData(e.target);
+    const userInput = formData.get("userInput");
+
+    if (!file && !userInput) {
+      setErrorMessage("Upload a PDF File or type your query");
       return;
     } else {
       setLoading(true);
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
+    if (file) {
+      formData.append("file", file);
 
-    try {
-      const response = await api.post("/extract-text", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      try {
+        const response = await api.post("/extract-text", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
-      setExtractedText(response.data.text);
-      setLoading(false);
-      setErrorMessage("");
-    } catch (error) {
-      console.error("Error: ", error);
-      setErrorMessage("Something Went Wrong, Try Again!");
-      setLoading(false);
+        setExtractedText(response.data.text);
+        setLoading(false);
+        setErrorMessage("");
+      } catch (error) {
+        console.error("Error: ", error);
+        setErrorMessage("Something Went Wrong, Try Again!");
+        setLoading(false);
+      }
+    } else if (userInput) {
+      setDisplayedText("");
+      console.log(userInput);
+      try {
+        const response = await api.post(
+          "/get-summary-of-text",
+          { text: userInput },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        setExtractedText(response.data.text);
+        setLoading(false);
+        setErrorMessage("");
+      } catch (error) {
+        console.error("Error: ", error);
+        setErrorMessage("Something Went Wrong, Try Again!");
+        setLoading(false);
+      }
     }
   };
 
@@ -183,6 +209,7 @@ export default function Home() {
             ) : (
               <input
                 type="text"
+                name="userInput"
                 placeholder="Enter Text"
                 className="bg-slate-900 text-zinc-100 text-xl sm:text-lg sm:w-[55vw] px-4 py-2 rounded-lg font-semibold border-2 border-black outline-none"
               />
