@@ -29,7 +29,9 @@ export default function Navbar() {
       <nav className="relative">
         <section className="h-16 w-full flex justify-between px-10 sm:px-4 items-center fixed border-b-2 border-black bg-white">
           <div className="text-3xl font-semibold z-50">
-            <Link to="/">Bookify</Link>
+            <Link to="/" className="font-bold">
+              Bookify
+            </Link>
           </div>
           <div
             className={`flex lg:justify-between items-center lg:w-[60vw] w-full ${
@@ -50,8 +52,9 @@ export default function Navbar() {
                   key={i}
                   to={item.url}
                   className={`${
-                    isOpen &&
-                    "bg-white p-2 px-8 rounded-xl w-60 text-center shadow-md shadow-slate-800"
+                    isOpen
+                      ? "bg-white p-2 px-8 rounded-xl w-60 text-center shadow-md shadow-slate-800"
+                      : "w-fit relative before:absolute before:bottom-0 before:left-0 before:w-0 before:h-[2px] before:bg-black before:bg-opacity-70 before:transition-all before:duration-300 hover:before:w-full"
                   }`}
                 >
                   {item.title}
