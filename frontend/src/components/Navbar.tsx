@@ -20,7 +20,7 @@ export default function Navbar() {
     ),
   };
 
-  const { userLoggedIn } = useAuth();
+  const { userLoggedIn, isUserVerified } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   let hamburger = hamburgerMenu.bar;
   hamburger = isOpen ? hamburgerMenu.cross : hamburgerMenu.bar;
@@ -63,7 +63,7 @@ export default function Navbar() {
             </div>
             {/* Login And Registration */}
             <div className="flex sm:flex-col sm:space-y-4 lg:space-x-4 items-center font-semibold">
-              {userLoggedIn ? (
+              {userLoggedIn && isUserVerified ? (
                 <>
                   <Link
                     to={"/profile"}

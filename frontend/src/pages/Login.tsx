@@ -1,14 +1,23 @@
 import LoginRegistrationForm from "../components/LoginRegForm";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
-import { loginUserWithEmailAndPassword } from "../firebase/auth";
+import { loginUserWithEmailAndPassword, logoutUser } from "../firebase/auth";
 import { useState } from "react";
+import {
+  collection,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "../firebase/firebase";
 
 export default function Login() {
-  const { userLoggedIn } = useAuth();
+  const { userLoggedIn, isUserVerified } = useAuth();
   const [errorMessage, setErrorMessage] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    setErrorMessage("Loading...");
     e.preventDefault();
     try {
       const formData = new FormData(e.currentTarget);
@@ -26,7 +35,27 @@ export default function Login() {
         return;
       }
 
-      await loginUserWithEmailAndPassword(email!, password!);
+      const userCredential = await loginUserWithEmailAndPassword(
+        email!,
+        password!
+      );
+      const user = userCredential.user;
+
+      if (!user.emailVerified) {
+        setErrorMessage("Please verify your email before logging in.");
+        await logoutUser();
+        return;
+      }
+
+      // Update "Verified" data
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("Email", "==", email));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0].ref;
+        await updateDoc(userDoc, { Verified: true });
+      }
 
       setErrorMessage("User Login Successfully!");
     } catch (error: any) {
@@ -43,9 +72,10 @@ export default function Login() {
     }
   }
 
-  if (userLoggedIn) {
+  if (userLoggedIn && isUserVerified) {
     return <Navigate to={"/"} replace={true} />;
   }
+
   return (
     <LoginRegistrationForm
       isLogin={true}

@@ -8,26 +8,31 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isUserVerified, setIsUserVerified] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, initializeUser);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser({ ...currentUser });
+        setUserLoggedIn(true);
+        setIsUserVerified(currentUser.emailVerified);
+      } else {
+        setUser(null);
+        setUserLoggedIn(false);
+        setIsUserVerified(false);
+      }
+
+      setLoading(false);
+    });
 
     return unsubscribe;
   }, []);
 
-  async function initializeUser(currentUser) {
-    if (currentUser) {
-      setUser({ ...currentUser });
-      setUserLoggedIn(true);
-    } else {
-      setUser(null);
-      setUserLoggedIn(false);
-    }
+  useEffect(() => {
+    console.log("isUserVerified = ", isUserVerified);
+  }, [isUserVerified]);
 
-    setLoading(false);
-  }
-
-  const value = { user, userLoggedIn, loading };
+  const value = { user, userLoggedIn, loading, isUserVerified };
 
   return (
     <AuthContext.Provider value={value}>
