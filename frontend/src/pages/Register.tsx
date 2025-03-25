@@ -36,6 +36,9 @@ export default function Register() {
         .trim();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+      const imageInput = (await formData.get("imageInput")) as File;
+      let imageURL = null;
+
       if (!email || !password || !confirmPassword || !firstName || !lastName) {
         setErrorMessage("All fields are required.");
         return;
@@ -67,12 +70,19 @@ export default function Register() {
       );
       const user = userCredential.user;
 
+      if (imageInput && imageInput.size > 0) {
+        console.log("Image Input: ", imageInput);
+        imageURL = await uploadImageToImgur(imageInput);
+        console.log(imageURL);
+      }
+
       const usersRef = collection(db, "users");
       const added = await addDoc(usersRef, {
         FirstName: firstName,
         LastName: lastName,
         Email: email,
         Verified: false,
+        userImage: imageURL,
       });
 
       if (!added) {
@@ -104,13 +114,14 @@ export default function Register() {
     }
   }
 
-  async function uploadImageToImgur(file: any) {
-    const CLIENT_ID = "5ea0c1a32b12ac5";
+  async function uploadImageToImgur(file: File) {
+    const CLIENT_ID = "aad565c0e43817e";
 
     const formData = new FormData();
     formData.append("image", file);
 
     try {
+      console.log("Uploading Image..");
       const response = await fetch("https://api.imgur.com/3/image", {
         method: "POST",
         headers: {
@@ -118,7 +129,39 @@ export default function Register() {
         },
         body: formData,
       });
+      console.log("Uploaded Image");
 
+      const data = await response.json();
+
+      if (data.success) {
+        return data.data.link;
+      } else {
+        console.error("Imgur upload failed:", data);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error uploading image to Imgur:", error);
+      return null;
+    }
+  }
+
+  async function uploadImageToImgurs(file: any) {
+    const CLIENT_ID = "b27e9accf12b501";
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      console.log("Uploading image to Imgur...");
+      const response = await fetch("https://api.imgur.com/3/image", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          Authorization: `Client-ID ${CLIENT_ID}`,
+        },
+        body: formData,
+      });
+      console.log("Uploaded image to Imgur...");
       const data = await response.json();
 
       if (data.success) {
