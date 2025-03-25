@@ -1,4 +1,4 @@
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import {
   doSignInWithGoogle,
@@ -14,6 +14,7 @@ export default function Register() {
   const { userLoggedIn, isUserVerified } = useAuth();
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     setErrorMessage("Verifying...");
@@ -85,7 +86,7 @@ export default function Register() {
       setErrorMessage("Verification email sent! Please check your inbox.");
 
       setTimeout(() => {
-        window.location.href = "/login";
+        navigate(`/login?slug=${encodeURIComponent(email)}`);
       }, 2000);
     } catch (error: any) {
       console.log(error);

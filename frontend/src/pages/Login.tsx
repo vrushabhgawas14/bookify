@@ -1,8 +1,8 @@
 import LoginRegistrationForm from "../components/LoginRegForm";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { loginUserWithEmailAndPassword, logoutUser } from "../firebase/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   collection,
   getDocs,
@@ -15,6 +15,17 @@ import { db } from "../firebase/firebase";
 export default function Login() {
   const { userLoggedIn, isUserVerified } = useAuth();
   const [errorMessage, setErrorMessage] = useState("");
+  const location = useLocation();
+  const [redirectMsg, setRedirectMsg] = useState("");
+
+  const params = new URLSearchParams(location.search);
+  const slugEmail = params.get("slug");
+
+  useEffect(() => {
+    if (slugEmail != null) {
+      setRedirectMsg(slugEmail);
+    }
+  }, [slugEmail]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     setErrorMessage("Loading...");
@@ -79,6 +90,7 @@ export default function Login() {
   return (
     <LoginRegistrationForm
       isLogin={true}
+      redirectMsg={redirectMsg}
       handleSubmit={handleSubmit}
       errorMessage={errorMessage}
     />

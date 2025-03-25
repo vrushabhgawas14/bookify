@@ -6,18 +6,26 @@ interface myProps {
   isLogin?: Boolean;
   handleSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   errorMessage?: string;
+  redirectMsg?: string;
 }
 
 export default function LoginRegistrationForm({
   isLogin,
   handleSubmit,
   errorMessage,
+  redirectMsg,
 }: myProps) {
   const [loading, setLoading] = useState(false);
 
   return (
     <>
       <main className="flex flex-col items-center justify-center my-10 px-6 text-zinc-200 space-y-4">
+        {redirectMsg && (
+          <h1 className="text-green-800 bg-white px-4 py-1 my-4 rounded-xl text-2xl sm:text-xl text-center">
+            Verification link sent to{" "}
+            <span className="font-bold">{redirectMsg}</span>
+          </h1>
+        )}
         {errorMessage && (
           <h2 className="text-xl text-center bg-gray-200 text-green-700 p-2 px-4 rounded-xl font-semibold">
             {errorMessage}
@@ -42,6 +50,7 @@ export default function LoginRegistrationForm({
                   type="text"
                   required
                   placeholder="john@gmail.com"
+                  defaultValue={redirectMsg}
                   className="px-2 pl-3 py-1 sm:w-[50vw] rounded-xl text-teal-900 outline-none"
                 />
               </div>
