@@ -71,9 +71,7 @@ export default function Register() {
       const user = userCredential.user;
 
       if (imageInput && imageInput.size > 0) {
-        console.log("Image Input: ", imageInput);
         imageURL = await uploadImageToImgur(imageInput);
-        console.log(imageURL);
       }
 
       const usersRef = collection(db, "users");
@@ -131,37 +129,6 @@ export default function Register() {
       });
       console.log("Uploaded Image");
 
-      const data = await response.json();
-
-      if (data.success) {
-        return data.data.link;
-      } else {
-        console.error("Imgur upload failed:", data);
-        return null;
-      }
-    } catch (error) {
-      console.error("Error uploading image to Imgur:", error);
-      return null;
-    }
-  }
-
-  async function uploadImageToImgurs(file: any) {
-    const CLIENT_ID = "b27e9accf12b501";
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      console.log("Uploading image to Imgur...");
-      const response = await fetch("https://api.imgur.com/3/image", {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          Authorization: `Client-ID ${CLIENT_ID}`,
-        },
-        body: formData,
-      });
-      console.log("Uploaded image to Imgur...");
       const data = await response.json();
 
       if (data.success) {
