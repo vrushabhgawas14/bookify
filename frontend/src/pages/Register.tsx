@@ -135,7 +135,7 @@ export default function Register() {
     return <Navigate to={"/"} replace={true} />;
   }
   return (
-    <main className="flex flex-col items-center justify-center my-10 px-6 text-zinc-200 space-y-4">
+    <main className="flex flex-col items-center justify-center my-10 px-6 space-y-4">
       <section className="flex flex-col items-center py-4 lg:px-6 rounded-xl sm:w-[90vw] bg-slate-200 border-2 border-slate-900 text-slate-900">
         <h1 className="text-3xl font-bold">Register</h1>
         <div className="py-6 flex flex-col items-center space-y-2">
