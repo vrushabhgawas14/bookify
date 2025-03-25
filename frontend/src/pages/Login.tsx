@@ -21,6 +21,7 @@ export default function Login() {
   const location = useLocation();
   const [redirectMsg, setRedirectMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const params = new URLSearchParams(location.search);
   const slugEmail = params.get("slug");
@@ -72,7 +73,8 @@ export default function Login() {
         await updateDoc(userDoc, { Verified: true });
       }
 
-      setErrorMessage("User Login Successfully!");
+      setErrorMessage("");
+      setSuccessMessage("User Login Successfully!");
     } catch (error: any) {
       console.log(error);
       if (error.code === "auth/invalid-credential") {
@@ -98,11 +100,6 @@ export default function Login() {
           Verification link sent to{" "}
           <span className="font-bold">{redirectMsg}</span>
         </h1>
-      )}
-      {errorMessage && (
-        <h2 className="text-xl text-center bg-gray-200 text-green-700 p-2 px-4 rounded-xl font-semibold">
-          {errorMessage}
-        </h2>
       )}
       <section className="flex flex-col items-center py-4 lg:px-6 rounded-xl sm:w-[90vw] bg-slate-200 border-2 border-slate-900 text-black">
         <h1 className="text-3xl font-bold">Login</h1>
@@ -138,6 +135,17 @@ export default function Login() {
                 className="w-[20vw] md:w-[25vw] sm:w-[50vw] px-2 pl-3 py-1 border border-gray-900 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 text-slate-900"
               />
             </div>
+            {errorMessage && (
+              <h2 className="w-[25vw] sm:w-[70vw] text-lg sm:text-base text-center bg-white border border-slate-900 text-red-700 py-1 px-2 rounded-xl font-semibold mx-4 text-wrap">
+                {errorMessage}
+              </h2>
+            )}
+
+            {successMessage && (
+              <h2 className="w-[25vw] sm:w-[70vw] text-lg sm:text-base text-center bg-white border border-slate-900 text-green-700 py-1 px-2 rounded-xl font-semibold mx-4 text-wrap">
+                {successMessage}
+              </h2>
+            )}
             <button
               type="submit"
               className="bg-white hover:bg-slate-100 text-xl hover:text-black p-1 px-8 rounded-xl text-center text-slate-950 sm:p-2 sm:px-8 border-2 border-slate-900"

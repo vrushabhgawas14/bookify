@@ -13,6 +13,7 @@ import { db } from "../firebase/firebase";
 export default function Register() {
   const { userLoggedIn, isUserVerified } = useAuth();
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -83,7 +84,8 @@ export default function Register() {
 
       await logoutUser();
 
-      setErrorMessage("Verification email sent! Please check your inbox.");
+      setErrorMessage("");
+      setSuccessMessage(`Verification email sent ! \nPlease check your inbox.`);
 
       setTimeout(() => {
         navigate(`/login?slug=${encodeURIComponent(email)}`);
@@ -229,6 +231,11 @@ export default function Register() {
             {errorMessage && (
               <h2 className="w-[30vw] sm:w-[70vw] text-lg sm:text-base text-center bg-slate-200 text-red-700 border border-slate-900 py-1 px-2 rounded-xl font-semibold mx-4 text-wrap">
                 {errorMessage}
+              </h2>
+            )}
+            {successMessage && (
+              <h2 className="w-[30vw] sm:w-[70vw] text-lg sm:text-base text-center bg-slate-200 text-green-700 border border-slate-900 py-1 px-2 rounded-xl font-semibold mx-4 text-wrap whitespace-pre-line">
+                {successMessage}
               </h2>
             )}
 
