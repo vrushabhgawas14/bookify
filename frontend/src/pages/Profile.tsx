@@ -39,7 +39,7 @@ export default function Profile() {
       <main>
         <div className="flex flex-col justify-center items-center my-10 space-y-4">
           <img
-            src={userData?.userImage || require("../assets/images/d4.png")}
+            src={userData?.UserImage || require("../assets/images/d4.png")}
             alt="Profile"
             className="w-40 h-40 rounded-full border-4 border-slate-900"
           />
@@ -48,15 +48,16 @@ export default function Profile() {
           </header>
 
           <p className="text-lg">
-            <span className="font-bold">Email: </span>
-            <span className="font-semibold">
-              {userData?.Email || "guest@gmail.com"}
-            </span>
-          </p>
-          <p className="text-lg">
             <span className="font-bold">Name: </span>
             <span className="font-semibold">
               {userData?.FirstName || "Guest"} {userData?.LastName}
+            </span>
+          </p>
+
+          <p className="text-lg">
+            <span className="font-bold">Email: </span>
+            <span className="font-semibold">
+              {userData?.Email || "guest@gmail.com"}
             </span>
           </p>
           <button

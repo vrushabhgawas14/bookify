@@ -51,6 +51,22 @@ export default function Login() {
         return;
       }
 
+      // Check if auth provider is google
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("Email", "==", email));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const userData = querySnapshot.docs[0].data();
+
+        if (userData.Provider === "google") {
+          setErrorMessage(
+            "You signed up with Google. \nPlease login using Google Again!"
+          );
+          return;
+        }
+      }
+
       const userCredential = await loginUserWithEmailAndPassword(
         email!,
         password!
@@ -64,10 +80,6 @@ export default function Login() {
       }
 
       // Update "Verified" data
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("Email", "==", email));
-      const querySnapshot = await getDocs(q);
-
       if (!querySnapshot.empty) {
         const userDoc = querySnapshot.docs[0].ref;
         await updateDoc(userDoc, { Verified: true });
@@ -136,7 +148,7 @@ export default function Login() {
               />
             </div>
             {errorMessage && (
-              <h2 className="w-[25vw] sm:w-[70vw] text-lg sm:text-base text-center bg-white border border-slate-900 text-red-700 py-1 px-2 rounded-xl font-semibold mx-4 text-wrap">
+              <h2 className="w-[25vw] sm:w-[70vw] text-lg sm:text-base text-center bg-white border border-slate-900 text-red-700 py-1 px-2 rounded-xl font-semibold mx-4 text-wrap whitespace-pre-line">
                 {errorMessage}
               </h2>
             )}

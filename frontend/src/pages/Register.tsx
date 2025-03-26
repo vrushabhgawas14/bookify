@@ -80,7 +80,8 @@ export default function Register() {
         LastName: lastName,
         Email: email,
         Verified: false,
-        userImage: imageURL,
+        UserImage: imageURL,
+        Provider: "email",
       });
 
       if (!added) {
