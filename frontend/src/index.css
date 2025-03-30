@@ -15,7 +15,7 @@ html::-webkit-scrollbar {
 }
 
 .toggleNav {
-  @apply fixed top-0 left-1/2 -translate-x-1/2 flex-col h-full z-40 space-y-10 sm:p-4 backdrop-blur-sm;
+  @apply fixed top-0 left-1/2 -translate-x-1/2 flex-col h-screen z-40 space-y-10 sm:p-4 backdrop-blur-sm bg-borderColor_secondary;
 }
 
 .answer-rendering {
