@@ -15,7 +15,7 @@ module.exports = {
 
         message: "#323232d9", // Prompt
 
-        backgroundBright: "#f9f7f3", // Extra bg White
+        colorBright: " #e4e4e7", // zinc-200
       },
       screens: {
         sm: { max: "900px" },

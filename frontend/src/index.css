@@ -11,7 +11,7 @@ html::-webkit-scrollbar {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-900 rounded-xl;
+  @apply bg-textColor_secondary/50 cursor-grab rounded-xl;
 }
 
 .toggleNav {
@@ -37,5 +37,5 @@ html::-webkit-scrollbar {
 }
 
 .answer-rendering::-webkit-scrollbar-thumb {
-  @apply bg-slate-800 bg-opacity-70 rounded-xl cursor-pointer;
+  @apply bg-textColor_secondary/50 rounded-xl cursor-grab;
 }

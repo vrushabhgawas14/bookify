@@ -195,12 +195,12 @@ export default function Home() {
       <main>
         <div className="flex flex-col justify-center items-center py-10">
           {stopDynamicText ? (
-            <header className="text-3xl text-center sm:text-xl">
+            <header className="text-3xl font-semibold text-center sm:text-xl">
               Hello {user ? user.email : "Guest"} !
             </header>
           ) : (
             <header
-              className={`text-3xl md:text-2xl sm:text-xl text-zinc-200 transition-opacity duration-500 ${
+              className={`text-3xl md:text-2xl sm:text-xl font-bold text-stone-200 transition-opacity duration-500 ${
                 isVisible ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -274,7 +274,7 @@ export default function Home() {
           )}
         </div>
         {/* Output Section */}
-        <section className="flex justify-center w-full">
+        <section className="flex justify-center w-full mb-10">
           <div className="w-[70vw] sm:w-[90vw] flex flex-col space-y-4 py-4">
             {/* Answer Text */}
             <div className="flex items-center space-x-4">
@@ -288,8 +288,8 @@ export default function Home() {
               </h2>
             </div>
             {/* Actual Answer */}
-            <div className="border-2 border-black rounded-xl bg-yellow-100">
-              <header className="flex justify-between items-center border-b-2 border-black py-2 px-4">
+            <div className="border border-borderColor_primary rounded-xl bg-backgroundDull">
+              <header className="flex justify-between items-center border-b border-borderColor_primary py-2 px-4">
                 <h2 className="text-2xl font-semibold">Summary</h2>
                 <div className="flex space-x-4">
                   <button>

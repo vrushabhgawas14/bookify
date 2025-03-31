@@ -3,7 +3,10 @@ import { ConnectColumn, LearnColumn } from "../constants/FooterDetails";
 export default function Footer() {
   return (
     <>
-      <footer id="footer" className="flex flex-col border-t-2 border-black">
+      <footer
+        id="footer"
+        className="flex flex-col border-t-2 border-borderColor_primary"
+      >
         {/* Actual Footer */}
         <section className="flex justify-between m-10 sm:flex-col ">
           {/* Left Side */}
@@ -11,7 +14,7 @@ export default function Footer() {
             <a href="/" className="text-4xl sm:text-3xl font-bold">
               Bookify
             </a>
-            <div className="flex items-center space-x-4 justify-center pb-4 border-b border-black">
+            <div className="flex items-center space-x-4 justify-center pb-4 border-b border-textColor_secondary/60">
               <a href="https://linkedin.com/in/vrushabhgawas/" target="_blank">
                 <img
                   src={require("../assets/svgs/linkedin.svg").default}
@@ -63,7 +66,7 @@ export default function Footer() {
                 <a
                   key={index}
                   href={item.url}
-                  className="flex flex-col py-2 text-xl w-fit relative before:absolute before:bottom-0 before:left-0 before:w-0 before:h-[2px] before:bg-black before:bg-opacity-70 before:transition-all before:duration-300 hover:before:w-full hover:opacity-95 ease-out duration-200"
+                  className="flex flex-col py-2 text-xl w-fit relative before:absolute before:bottom-0 before:left-0 before:w-0 before:h-[2px] before:bg-textColor_secondary/60 before:transition-all before:duration-300 hover:before:w-full hover:opacity-95 ease-out duration-200"
                 >
                   {item.text}
                 </a>
@@ -76,7 +79,7 @@ export default function Footer() {
                 <a
                   key={index}
                   href={item.url}
-                  className="flex flex-col py-2 text-xl w-fit relative before:absolute before:bottom-0 before:left-0 before:w-0 before:h-[2px] before:bg-black before:bg-opacity-70 before:transition-all before:duration-300 hover:before:w-full hover:opacity-95 ease-out duration-200"
+                  className="flex flex-col py-2 text-xl w-fit relative before:absolute before:bottom-0 before:left-0 before:w-0 before:h-[2px] before:bg-textColor_secondary/60 before:transition-all before:duration-300 hover:before:w-full hover:opacity-95 ease-out duration-200"
                 >
                   {item.text}
                 </a>
@@ -93,7 +96,7 @@ export default function Footer() {
             <a
               href="http://vrushabhgawas14.github.io"
               target="_blank"
-              className="relative before:absolute before:bottom-0 before:left-0 before:h-[1px] before:w-full before:bg-black"
+              className="relative before:absolute before:bottom-0 before:left-0 before:h-[1px] before:w-full before:bg-textColor_secondary"
             >
               Vrushabh Gawas
             </a>
