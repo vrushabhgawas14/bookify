@@ -290,7 +290,7 @@ export default function Home() {
             {/* Actual Answer */}
             <div className="border border-borderColor_primary rounded-xl bg-backgroundDull">
               <header className="flex justify-between items-center border-b border-borderColor_primary py-2 px-4">
-                <h2 className="text-2xl font-semibold">Summary</h2>
+                <h2 className="text-xl font-semibold">Summary</h2>
                 <div className="flex space-x-4">
                   <button>
                     <img

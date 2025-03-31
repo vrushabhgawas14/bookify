@@ -5,13 +5,16 @@ export default function Footer() {
     <>
       <footer
         id="footer"
-        className="flex flex-col border-t-2 border-borderColor_primary"
+        className="flex flex-col border-t-2 border-borderColor_primary text-textColor_primary/90"
       >
         {/* Actual Footer */}
         <section className="flex justify-between m-10 sm:flex-col ">
           {/* Left Side */}
           <div className="p-4 space-y-4 text-center">
-            <a href="/" className="text-4xl sm:text-3xl font-bold">
+            <a
+              href="/"
+              className="text-4xl sm:text-3xl font-bold text-textColor_primary/95"
+            >
               Bookify
             </a>
             <div className="flex items-center space-x-4 justify-center pb-4 border-b border-textColor_secondary/60">
