@@ -149,7 +149,7 @@ export default function Register() {
   }
   return (
     <main className="flex flex-col items-center justify-center my-10 px-6 space-y-4">
-      <section className="flex flex-col items-center py-4 lg:px-6 rounded-xl sm:w-[90vw] bg-slate-200 border-2 border-slate-900 text-slate-900">
+      <section className="flex flex-col items-center py-4 lg:px-6 rounded-xl sm:w-[90vw] bg-message border-2 border-borderColor_primary text-textColor_primary">
         <h1 className="text-3xl font-bold">Register</h1>
         <div className="py-6 flex flex-col items-center space-y-2">
           <form
@@ -162,7 +162,7 @@ export default function Register() {
                 id="firstName"
                 name="firstName"
                 placeholder="First Name*"
-                className="w-full p-2 border border-gray-900 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full p-2 border border-textColor_primary bg-white/95 rounded-lg focus:outline-none focus:ring-1 focus:ring-borderColor_primary text-background"
                 required
               />
               <input
@@ -170,7 +170,7 @@ export default function Register() {
                 id="lastName"
                 name="lastName"
                 placeholder="Last Name*"
-                className="w-full p-2 border border-gray-900 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full p-2 border border-textColor_primary bg-white/95 rounded-lg focus:outline-none focus:ring-1 focus:ring-borderColor_primary text-background"
                 required
               />
             </div>
@@ -179,7 +179,7 @@ export default function Register() {
                 htmlFor="userEmail"
                 className="text-xl sm:text-lg cursor-pointer"
               >
-                Email<span className="text-red-700">*</span> :
+                Email<span className="text-red-600">*</span> :
               </label>
               <input
                 id="userEmail"
@@ -187,7 +187,7 @@ export default function Register() {
                 type="text"
                 required
                 placeholder="john@gmail.com"
-                className="border border-gray-900 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 px-2 pl-3 py-1 sm:w-[50vw]"
+                className="bg-white/95 border border-textColor_primary rounded-lg focus:outline-none focus:ring-1 focus:ring-textColor_secondary text-background px-2 pl-3 py-1 sm:w-[50vw]"
               />
             </div>
             <div className="flex items-center justify-between w-full font-semibold space-x-4 pb-2 px-4">
@@ -195,7 +195,7 @@ export default function Register() {
                 htmlFor="userPassword"
                 className="text-xl sm:text-lg cursor-pointer"
               >
-                Password<span className="text-red-700">*</span> :
+                Password<span className="text-red-600">*</span> :
               </label>
               <input
                 id="userPassword"
@@ -203,7 +203,7 @@ export default function Register() {
                 type="password"
                 required
                 placeholder="john@123"
-                className="border border-gray-900 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 px-2 pl-3 py-1 sm:w-[50vw]"
+                className="bg-white/95 border border-textColor_primary rounded-lg focus:outline-none focus:ring-1 focus:ring-textColor_secondary text-background px-2 pl-3 py-1 sm:w-[50vw]"
               />
             </div>
             <div className="flex items-center justify-between w-full font-semibold space-x-4 pb-2 px-4">
@@ -211,7 +211,7 @@ export default function Register() {
                 htmlFor="userConfPassword"
                 className="text-xl sm:text-lg cursor-pointer"
               >
-                Confirm Password<span className="text-red-700">*</span> :
+                Confirm Password<span className="text-red-600">*</span> :
               </label>
               <input
                 id="userConfPassword"
@@ -219,7 +219,7 @@ export default function Register() {
                 type="password"
                 required
                 placeholder="john@123"
-                className="border border-gray-900 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 px-2 pl-3 py-1 sm:w-[50vw]"
+                className="bg-white/95 border border-textColor_primary rounded-lg focus:outline-none focus:ring-1 focus:ring-textColor_secondary text-background px-2 pl-3 py-1 sm:w-[50vw]"
               />
             </div>
 
@@ -235,24 +235,24 @@ export default function Register() {
                 id="imageInput"
                 name="imageInput"
                 accept=".jpg,.jpeg,.png"
-                className="w-full  border border-slate-900 file:bg-background file:rounded-lg file:px-2 file:cursor-pointer p-2 rounded-md mb-3 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full  border border-borderColor_primary file:bg-colorBright file:rounded-lg file:px-2 file:cursor-pointer p-2 rounded-md mb-3 focus:outline-none focus:ring-1 focus:ring-borderColor_secondary"
               />
             </div>
 
             {errorMessage && (
-              <h2 className="w-[30vw] sm:w-[70vw] text-lg sm:text-base text-center bg-slate-200 text-red-700 border border-slate-900 py-1 px-2 rounded-xl font-semibold mx-4 text-wrap">
+              <h2 className="w-[30vw] sm:w-[70vw] text-lg sm:text-base text-center bg-colorBright text-red-700 border border-borderColor_primary py-1 px-2 rounded-xl font-semibold mx-4 text-wrap">
                 {errorMessage}
               </h2>
             )}
             {successMessage && (
-              <h2 className="w-[30vw] sm:w-[70vw] text-lg sm:text-base text-center bg-slate-200 text-green-700 border border-slate-900 py-1 px-2 rounded-xl font-semibold mx-4 text-wrap whitespace-pre-line">
+              <h2 className="w-[30vw] sm:w-[70vw] text-lg sm:text-base text-center bg-colorBright text-green-700 border border-borderColor_primary py-1 px-2 rounded-xl font-semibold mx-4 text-wrap whitespace-pre-line">
                 {successMessage}
               </h2>
             )}
 
             <button
               type="submit"
-              className="bg-white hover:bg-slate-100 text-xl hover:text-black p-1 px-8 rounded-xl text-center text-slate-950 sm:p-2 sm:px-8 border-2 border-slate-900"
+              className="bg-colorBright hover:bg-slate-100 text-xl hover:text-black p-1 px-8 rounded-xl text-center text-stone-950 sm:p-2 sm:px-8 border-2 border-backgroundDull"
             >
               Create Account
             </button>
@@ -271,7 +271,7 @@ export default function Register() {
             <button
               type="submit"
               onClick={doSignInWithGoogle}
-              className="flex items-center justify-center space-x-2 font-semibold text-xl px-3 py-2 bg-slate-900 text-zinc-200 hover:bg-slate-950 rounded-xl text-center"
+              className="flex items-center justify-center space-x-2 font-semibold text-xl px-3 py-2 bg-background text-zinc-200 hover:bg-backgroundDull rounded-xl text-center border border-borderColor_primary"
             >
               {loading ? (
                 <span>Loading...</span>
