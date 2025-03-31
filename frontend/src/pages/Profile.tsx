@@ -41,7 +41,7 @@ export default function Profile() {
           <img
             src={userData?.UserImage || require("../assets/images/d4.png")}
             alt="Profile"
-            className="w-40 h-40 rounded-full border-4 border-slate-900"
+            className="w-40 h-40 rounded-full border-4 border-borderColor_primary"
           />
           <header className="text-3xl">
             Hello {userData ? userData.FirstName : "Guest"}
@@ -62,7 +62,7 @@ export default function Profile() {
           </p>
           <button
             onClick={logoutUser}
-            className="bg-white text-slate-900 p-1 px-4 hover:bg-slate-950 hover:text-white ease-in-out duration-200 border-2 border-slate-900 text-xl rounded-lg"
+            className="bg-borderColor_secondary text-textColor_primary p-1 px-4 hover:bg-backgroundDull hover:text-white ease-in-out duration-200 border border-borderColor_primary text-xl rounded-lg"
           >
             LogOut
           </button>
