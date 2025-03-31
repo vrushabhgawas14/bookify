@@ -14,6 +14,7 @@ module.exports = {
         borderColor_secondary: "#a8a29e26", // textColor_secondary/20
 
         message: "#323232d9", // Prompt
+
         backgroundBright: "#f9f7f3", // Extra bg White
       },
       screens: {

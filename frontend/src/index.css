@@ -18,6 +18,16 @@ html::-webkit-scrollbar {
   @apply fixed top-0 left-1/2 -translate-x-1/2 flex-col h-screen z-40 space-y-10 sm:p-4 backdrop-blur-sm bg-borderColor_secondary;
 }
 
+.inputMessage {
+  background: linear-gradient(
+    to right,
+    #83828226,
+    #83828226,
+    #3f3f3fd9,
+    #555454
+  );
+}
+
 .answer-rendering {
   scroll-behavior: smooth;
 }

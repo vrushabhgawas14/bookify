@@ -41,7 +41,7 @@ export default function Navbar() {
       <nav className="relative">
         <section className="h-16 w-full flex justify-between px-10 sm:px-4 items-center fixed border-b border-borderColor_secondary bg-backgroundDull z-40">
           <div className="text-3xl font-semibold z-50">
-            <Link to="/" className="font-bold text-textColor_secondary">
+            <Link to="/" className="font-bold text-textColor_primary">
               Bookify
             </Link>
           </div>

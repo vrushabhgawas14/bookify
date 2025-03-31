@@ -16,6 +16,7 @@ export default function Home() {
   const [progressText, setProgressText] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [stopDynamicText, setStopDynamicText] = useState(false);
 
   // When File is Selected
   const handleFileChange = (e: any) => {
@@ -49,6 +50,7 @@ export default function Home() {
 
     if (!file && !userInput) {
       setErrorMessage("Upload a PDF File or type your query");
+      setStopDynamicText(false);
       return;
     } else {
       setLoading(true);
@@ -74,7 +76,7 @@ export default function Home() {
       }
     } else if (userInput) {
       setDisplayedText("");
-      console.log(userInput);
+      // console.log(userInput);
       try {
         const response = await api.post(
           "/get-summary-of-text",
@@ -95,6 +97,7 @@ export default function Home() {
         setLoading(false);
       }
     }
+    setStopDynamicText(true);
   };
 
   // UseRef for checking scroll status in div box
@@ -160,17 +163,55 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [isTextExtracting]);
 
+  const phrases = [
+    "What can I help you with?",
+    "Summarize a PDF?",
+    "Ask for answers?",
+    "Generate audio output?",
+    "Extract key insights?",
+    "Analyze documents?",
+  ];
+
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setIsVisible(false);
+
+      setTimeout(() => {
+        setCurrentPhraseIndex((prevIndex) =>
+          prevIndex === phrases.length - 1 ? 0 : prevIndex + 1
+        );
+        setIsVisible(true);
+      }, 500);
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <>
       <main>
         <div className="flex flex-col justify-center items-center py-10">
-          <header className="text-3xl text-center sm:text-xl">
-            Hello {user ? user.email : "Guest"} !
-          </header>
+          {stopDynamicText ? (
+            <header className="text-3xl text-center sm:text-xl">
+              Hello {user ? user.email : "Guest"} !
+            </header>
+          ) : (
+            <header
+              className={`text-3xl md:text-2xl sm:text-xl text-zinc-200 transition-opacity duration-500 ${
+                isVisible ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {phrases[currentPhraseIndex]}
+            </header>
+          )}
+
           {/* Input Section */}
           <form
             onSubmit={handleSubmit}
-            className="flex justify-between sm:justify-around items-center mt-10 p-2 rounded-2xl space-x-2 border-2 border-black px-4 sm:w-[90vw]"
+            className="flex justify-between sm:justify-around items-center mt-10 p-2 rounded-2xl space-x-2 border border-borderColor_primary px-4 w-[50vw] sm:w-[90vw]"
           >
             <div className="flex items-center">
               <input
@@ -186,13 +227,13 @@ export default function Home() {
                   <img
                     src={require("../assets/svgs/gallery.svg").default}
                     alt="File Upload"
-                    className="w-10 h-10"
+                    className="w-10 h-10 bg-borderColor_primary rounded-lg"
                   />
                 </label>
               ) : (
                 <div
                   onClick={resetFileInput}
-                  className="cursor-pointer p-2 mr-1 bg-gray-200 hover:bg-gray-200 hover:bg-opacity-45 rounded-lg border-2 border-slate-900"
+                  className="cursor-pointer p-2 mr-1 bg-textColor_primary hover:bg-textColor_primary/70 ease-in-out duration-150 hover:bg-opacity-45 rounded-lg border-2 border-borderColor_primary"
                 >
                   <img
                     src={require("../assets/svgs/cross.svg").default}
@@ -203,15 +244,15 @@ export default function Home() {
               )}
             </div>
             {selectedFileName ? (
-              <div className="font-semibold w-64 sm:w-60 bg-slate-800 px-4 py-3 text-zinc-200 rounded-xl">
+              <div className="inputMessage font-semibold w-96 md:w-80 sm:w-60 bg-message px-4 py-3 text-textColor_primary rounded-xl line-clamp-4">
                 &quot;{selectedFileName}&quot; Selected.
               </div>
             ) : (
               <input
                 type="text"
                 name="userInput"
-                placeholder="Enter Text"
-                className="bg-slate-900 text-zinc-100 text-xl sm:text-lg sm:w-[55vw] px-4 py-2 rounded-lg font-semibold border-2 border-black outline-none"
+                placeholder="Ask anything..."
+                className="inputMessage bg-message text-textColor_primary text-xl sm:text-lg w-[85%] sm:w-[55vw] px-4 py-2 rounded-lg font-semibold border border-borderColor_primary outline-none"
               />
             )}
 
@@ -227,7 +268,7 @@ export default function Home() {
             </button>
           </form>
           {errorMessage && (
-            <div className="mt-4 py-1 px-2 max-w-[80vw] text-center rounded-xl font-semibold text-red-600 border-2 border-black">
+            <div className="mt-4 py-1 px-2 max-w-[80vw] text-center rounded-xl font-semibold text-red-800 bg-textColor_secondary border-2 border-borderColor_primary">
               {errorMessage}
             </div>
           )}
