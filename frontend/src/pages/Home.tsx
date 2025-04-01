@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { api } from "../api";
 import { useAuth } from "../context/authContext";
 import { Headphones, FileText, Brain, BookMarked, Crown } from "lucide-react";
+import AudioControl from "../components/AudioControl";
 
 export default function Home() {
   const [file, setFile] = useState(null);
@@ -298,7 +299,7 @@ export default function Home() {
           )}
         </div>
         {/* Output Section */}
-        <section className="flex justify-center w-full mb-10">
+        <section className="flex flex-col items-center justify-center w-full mb-10">
           <div className="w-[70vw] sm:w-[90vw] flex flex-col space-y-4 py-4">
             {/* Answer Text */}
             <div className="flex items-center space-x-4">
@@ -346,6 +347,9 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {/* Audio Controls */}
+          <AudioControl extractedText={extractedText} />
         </section>
       </main>
 
