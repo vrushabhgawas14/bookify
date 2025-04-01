@@ -1,6 +1,8 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../firebase/firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../firebase/firebase";
 
 const AuthContext = createContext();
 
@@ -9,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isUserVerified, setIsUserVerified] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -32,7 +35,29 @@ export const AuthProvider = ({ children }) => {
     console.log("isUserVerified = ", isUserVerified);
   }, [isUserVerified]);
 
-  const value = { user, userLoggedIn, loading, isUserVerified };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user?.email) {
+        try {
+          const q = query(
+            collection(db, "users"),
+            where("Email", "==", user.email)
+          );
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            const userData = querySnapshot.docs[0].data();
+            setUserData(userData);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
+
+  const value = { user, userLoggedIn, loading, isUserVerified, userData };
 
   return (
     <AuthContext.Provider value={value}>

@@ -1,35 +1,9 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { logoutUser } from "../firebase/auth";
-import { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../firebase/firebase";
 
 export default function Profile() {
-  const { user, userLoggedIn } = useAuth();
-  const [userData, setUserData] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (user?.email) {
-        try {
-          const q = query(
-            collection(db, "users"),
-            where("Email", "==", user.email)
-          );
-          const querySnapshot = await getDocs(q);
-          if (!querySnapshot.empty) {
-            const userData = querySnapshot.docs[0].data();
-            setUserData(userData);
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      }
-    };
-
-    fetchUserData();
-  }, [user]);
+  const { userLoggedIn, userData } = useAuth();
 
   if (!userLoggedIn) {
     return <Navigate to={"/login"} replace={true} />;
