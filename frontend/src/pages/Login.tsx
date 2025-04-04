@@ -160,7 +160,7 @@ export default function Login() {
             )}
             <button
               type="submit"
-              className="bg-colorBright hover:bg-slate-100 text-xl hover:text-black p-1 px-8 rounded-xl text-center text-stone-950 sm:p-2 sm:px-8 border-2 border-backgroundDull"
+              className="bg-colorBright hover:bg-slate-100 text-xl sm:text-lg hover:text-black p-1 px-8 rounded-xl text-center text-stone-950 sm:px-6 border-2 border-backgroundDull"
             >
               Login
             </button>
