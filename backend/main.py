@@ -7,6 +7,7 @@ import fitz # type: ignore # PyMuPDF
 import requests # type: ignore
 import json
 from typing import Dict
+from docx import Document # type: ignore
 
 load_dotenv()
 
@@ -34,25 +35,45 @@ def main():
 @app.post("/extract-text")
 async def extract_text(file: UploadFile = File(...)):
     try:
-        pdf_content = await file.read() # pymupdf takes 2 sec for 165 pdf
+        file_content = await file.read()
+        filename = file.filename.lower()
 
-        pdf_document = fitz.open(stream=pdf_content,filetype="pdf")
         extracted_text = ""
 
-        for page_no in range(len(pdf_document)):
-            page = pdf_document[page_no]
-            extracted_text += page.get_text("text") + "\n" 
+        if filename.endswith(".pdf"):
+            # PDF
+            pdf_document = fitz.open(stream=file_content,filetype="pdf")
+            print("Number of Pages in PDF: ",len(pdf_document))
+            if(len(pdf_document) > 12):
+                return {"text":"Please provide pdf with less than 12 pages."}
 
-        pdf_document.close()
+            for page_no in range(len(pdf_document)):
+                page = pdf_document[page_no]
+                extracted_text += page.get_text("text") + "\n" 
+
+            pdf_document.close()
+
+        elif filename.endswith(".docx"):
+            # DOCX
+            with open("temp.docx", "wb") as temp_file:
+                temp_file.write(file_content)
+            doc = Document("temp.docx")
+            for para in doc.paragraphs:
+                extracted_text += para.text + "\n"
+            
+            number_of_words = len(extracted_text.strip(" ").split(" "))
+            print("Number of Pages in DOCX: ",number_of_words)
+            if( number_of_words > 2700):
+                return {"text": "The document is too large to process. Kindly reduce its content or number of pages to less than 12"}
+
+        else:
+            return {"text": "Unsupported file type. Please upload PDF or DOCX."}
+
         calculate_char(extracted_text.strip(),"Input:")
-
         summarized_text = summarize_text(extracted_text.strip()) # Summarize
         calculate_char(summarized_text,"Output: ")
-
-        print(summarized_text + "\n\nNew Text:\n\n")
         
         formatted_text = format_text_with_line_breaks(summarized_text.strip())
-        print("Final: \n",formatted_text)
 
         return {"text":formatted_text.strip()}
 

@@ -241,7 +241,7 @@ export default function Home() {
             <div className="flex items-center">
               <input
                 type="file"
-                accept="application/pdf"
+                accept=".pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 id="file-input"
                 onChange={handleFileChange}
                 ref={fileInputRef}
