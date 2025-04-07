@@ -31,7 +31,7 @@ export default function About() {
           <h2 className="text-3xl font-bold mb-12 text-center">
             Core Features
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 md:grid-cols-3 gap-8">
             <FeatureCard
               icon={<FileText className="w-8 h-8" />}
               title="Document Processing"
@@ -53,11 +53,11 @@ export default function About() {
 
       {/* User Groups */}
       <section className="py-16 px-6">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl md:max-w-xl mx-auto">
           <h2 className="text-3xl font-bold mb-12 text-center">
             Who Benefits from Bookify?
           </h2>
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-3 gap-8">
             <UserGroupCard
               icon={<Users className="w-12 h-12" />}
               title="Visually Impaired Users"
@@ -124,7 +124,7 @@ export default function About() {
           <h2 className="text-3xl font-bold mb-12 text-center">
             Audio Playback Features
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 lg:grid-cols-3 gap-8">
             <AudioFeature
               icon={<Volume2 className="w-6 h-6" />}
               title="Volume Control"

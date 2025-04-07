@@ -1,61 +1,14 @@
-// import { Navigate } from "react-router-dom";
-// import { useAuth } from "../context/authContext";
-// import { logoutUser } from "../firebase/auth";
-
-// export default function Profile() {
-//   const { userLoggedIn, userData } = useAuth();
-
-//   if (!userLoggedIn) {
-//     return <Navigate to={"/login"} replace={true} />;
-//   }
-//   return (
-//     <>
-//       <main>
-//         <div className="flex flex-col justify-center items-center my-10 space-y-4">
-//           <img
-//             src={userData?.UserImage || require("../assets/images/d4.png")}
-//             alt="Profile"
-//             className="w-40 h-40 rounded-full border-4 border-borderColor_primary"
-//           />
-//           <header className="text-3xl">
-//             Hello {userData ? userData.FirstName : "Guest"}
-//           </header>
-
-//           <p className="text-lg">
-//             <span className="font-bold">Name: </span>
-//             <span className="font-semibold">
-//               {userData?.FirstName || "Guest"} {userData?.LastName}
-//             </span>
-//           </p>
-
-//           <p className="text-lg">
-//             <span className="font-bold">Email: </span>
-//             <span className="font-semibold">
-//               {userData?.Email || "guest@gmail.com"}
-//             </span>
-//           </p>
-//           <button
-//             onClick={logoutUser}
-//             className="bg-borderColor_secondary text-textColor_primary p-1 px-4 hover:bg-backgroundDull hover:text-white ease-in-out duration-200 border border-borderColor_primary text-xl rounded-lg"
-//           >
-//             LogOut
-//           </button>
-//         </div>
-//       </main>
-//     </>
-//   );
-// }
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import {
   logoutUser,
-  deleteUserAccount,
+  // deleteUserAccount,
   updateUserProfile,
 } from "../firebase/auth";
 import { Pencil, Trash2, Camera, X, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 export default function Profile() {
   const { userLoggedIn, userData } = useAuth();
@@ -63,7 +16,15 @@ export default function Profile() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [newImage, setNewImage] = useState<File | null>(null);
-  const [newName, setNewName] = useState(userData?.FirstName || "");
+  const [oldName, setOldName] = useState("");
+  const [newName, setNewName] = useState("");
+
+  useEffect(() => {
+    if (userData) {
+      setOldName(userData?.FirstName + " " + userData?.LastName);
+      setNewName(userData?.FirstName + " " + userData?.LastName);
+    }
+  }, [userData]);
 
   if (!userLoggedIn) {
     return <Navigate to={"/login"} replace={true} />;
@@ -78,7 +39,21 @@ export default function Profile() {
   const handleUpdateProfile = async () => {
     try {
       setIsUpdating(true);
-      await updateUserProfile(newName, newImage);
+
+      if (oldName !== newName && newImage != null) {
+        // Both Changed
+        await updateUserProfile(newName, newImage);
+      } else if (oldName !== newName) {
+        // Only Name Changed
+        await updateUserProfile(newName);
+      } else if (newImage != null) {
+        // Only Image updated
+        await updateUserProfile(oldName, newImage);
+      } else {
+        setIsEditing(false);
+        toast.success("Nothing to change!");
+        return;
+      }
       setIsEditing(false);
       toast.success("Profile updated successfully!");
     } catch (error) {
@@ -91,7 +66,7 @@ export default function Profile() {
   const handleDeleteAccount = async () => {
     try {
       setIsDeleting(true);
-      await deleteUserAccount();
+      // await deleteUserAccount();
       toast.success("Account deleted successfully");
     } catch (error) {
       toast.error("Failed to delete account");
@@ -99,9 +74,15 @@ export default function Profile() {
     }
   };
 
+  function cancelEdit() {
+    setNewImage(null);
+    setNewName(oldName);
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-12">
+        <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
         <div className="bg-backgroundDull rounded-2xl p-8 shadow-lg border border-borderColor_primary">
           <div className="relative flex flex-col items-center">
             {/* Profile Image */}
@@ -122,7 +103,7 @@ export default function Profile() {
                     type="file"
                     className="hidden"
                     onChange={handleImageChange}
-                    accept="image/*"
+                    accept=".jpg,.jpeg,.png"
                   />
                 </label>
               )}
@@ -134,7 +115,7 @@ export default function Profile() {
               className="absolute top-0 right-0 p-2 text-textColor_secondary hover:text-colorBright transition-colors"
             >
               {isEditing ? (
-                <X className="w-6 h-6" />
+                <X className="w-6 h-6" onClick={cancelEdit} />
               ) : (
                 <Pencil className="w-6 h-6" />
               )}
@@ -147,6 +128,7 @@ export default function Profile() {
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
+                  placeholder="Enter new name"
                   className="bg-background text-textColor_primary text-2xl text-center border border-borderColor_primary rounded-lg px-4 py-2 focus:outline-none focus:border-colorBright"
                 />
               ) : (
@@ -157,7 +139,7 @@ export default function Profile() {
 
               <div className="space-y-2 text-textColor_secondary">
                 <p className="text-lg">
-                  <span className="font-semibold">Full Name: </span>
+                  <span className="font-semibold">Name: </span>
                   {userData?.FirstName || "Guest"} {userData?.LastName}
                 </p>
                 <p className="text-lg">
@@ -167,7 +149,7 @@ export default function Profile() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+              <div className="flex flex-col justify-center gap-4 mt-8">
                 {isEditing ? (
                   <button
                     onClick={handleUpdateProfile}
@@ -191,7 +173,7 @@ export default function Profile() {
 
                 <button
                   onClick={() => setIsDeleting(true)}
-                  className="flex items-center justify-center px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  className="flex items-center justify-center px-6 py-2 bg-red-800 text-white rounded-lg hover:bg-red-900 transition-colors"
                 >
                   <Trash2 className="w-5 h-5 mr-2" />
                   Delete Account
@@ -221,7 +203,7 @@ export default function Profile() {
                 </button>
                 <button
                   onClick={handleDeleteAccount}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  className="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors"
                 >
                   Delete
                 </button>

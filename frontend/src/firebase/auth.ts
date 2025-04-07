@@ -6,7 +6,15 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth, db } from "./firebase";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 
 export const registerUserWithEmailAndPassword = (
   email: string,
@@ -69,3 +77,77 @@ export const doSignInWithGoogle = async () => {
 export const logoutUser = () => {
   return signOut(auth);
 };
+
+export const updateUserProfile = async (
+  newName?: string,
+  newImage?: File | null
+) => {
+  const user = auth.currentUser;
+  if (!user) throw new Error("No user logged in");
+
+  const userQuery = query(
+    collection(db, "users"),
+    where("Email", "==", user.email)
+  );
+  const userDocs = await getDocs(userQuery);
+
+  let imageURL: string | null = null;
+  let fullName: string[] | null = null;
+  let firstName = "";
+  let lastName = "";
+
+  if (newName) {
+    fullName = newName?.split(" ");
+    firstName = fullName ? fullName[0] : "";
+    lastName =
+      fullName && fullName.length > 1 ? fullName.slice(1).join(" ") : "";
+  }
+
+  // Upload image to Imgur if provided
+  if (newImage) {
+    imageURL = await uploadImageToImgur(newImage);
+  }
+
+  for (const document of userDocs.docs) {
+    const updates: any = {};
+
+    if (newName) updates.FirstName = firstName;
+    if (newName) updates.LastName = lastName;
+    if (imageURL) updates.UserImage = imageURL;
+
+    if (Object.keys(updates).length > 0) {
+      await updateDoc(doc(db, "users", document.id), updates);
+    }
+  }
+};
+
+async function uploadImageToImgur(file: File) {
+  const CLIENT_ID = "aad565c0e43817e";
+
+  const formData = new FormData();
+  formData.append("image", file);
+
+  try {
+    console.log("Uploading Image..");
+    const response = await fetch("https://api.imgur.com/3/image", {
+      method: "POST",
+      headers: {
+        Authorization: `Client-ID ${CLIENT_ID}`,
+      },
+      body: formData,
+    });
+    console.log("Uploaded Image");
+
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data.link;
+    } else {
+      console.error("Imgur upload failed:", data);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error uploading image to Imgur:", error);
+    return null;
+  }
+}
