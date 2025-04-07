@@ -4,12 +4,8 @@ export const LearnColumn = [
     url: "/about",
   },
   {
-    text: "Summary",
-    url: "/summaries",
-  },
-  {
-    text: "Audio",
-    url: "/audio",
+    text: "Dashboard",
+    url: "/dashboard",
   },
   {
     text: "Library",

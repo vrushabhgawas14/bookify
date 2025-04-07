@@ -8,12 +8,8 @@ export const NavbarDetails = [
     url: "/about",
   },
   {
-    title: "Summaries",
-    url: "/summaries",
-  },
-  {
-    title: "Audio",
-    url: "/audio",
+    title: "Dashboard",
+    url: "/dashboard",
   },
   {
     title: "Library",

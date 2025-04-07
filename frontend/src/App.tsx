@@ -3,12 +3,11 @@ import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import NotFoundPage from "./components/NotFoundPage";
-import Summaries from "./pages/Summaries";
-import Audio from "./pages/Audio";
 import Library from "./pages/Library";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
   return (
@@ -17,8 +16,7 @@ export default function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/summaries" element={<Summaries />} />
-          <Route path="/audio" element={<Audio />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/library" element={<Library />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
