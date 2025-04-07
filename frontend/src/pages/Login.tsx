@@ -13,7 +13,8 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../firebase/firebase";
+import { auth, db } from "../firebase/firebase";
+import { sendPasswordResetEmail } from "firebase/auth";
 
 export default function Login() {
   const { userLoggedIn, isUserVerified } = useAuth();
@@ -101,6 +102,31 @@ export default function Login() {
     }
   }
 
+  async function handleForgotPassword() {
+    const emailInput = document.getElementById("userEmail") as HTMLInputElement;
+    const email = emailInput?.value.trim();
+
+    if (!email) {
+      setErrorMessage("Please enter your email above to reset password.");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setSuccessMessage("Password reset email sent! Check your inbox.");
+      setErrorMessage("");
+    } catch (error: any) {
+      console.log(error);
+      if (error.code === "auth/user-not-found") {
+        setErrorMessage("User with this email does not exist.");
+      } else if (error.code === "auth/invalid-email") {
+        setErrorMessage("Please enter a valid email address.");
+      } else {
+        setErrorMessage("Failed to send reset email: " + error.message);
+      }
+    }
+  }
+
   if (userLoggedIn && isUserVerified) {
     return <Navigate to={"/"} replace={true} />;
   }
@@ -147,6 +173,12 @@ export default function Login() {
                 className="w-[20vw] md:w-[25vw] sm:w-[50vw] px-2 pl-3 py-1 border border-textColor_primary  bg-white/95 rounded-lg focus:outline-none focus:ring-1 focus:ring-borderColor_primary text-background"
               />
             </div>
+            <p
+              className="text-sm font-semibold text-textColor_secondary cursor-pointer hover:underline"
+              onClick={handleForgotPassword}
+            >
+              Forgot Password?
+            </p>
             {errorMessage && (
               <h2 className="w-[25vw] sm:w-[70vw] text-lg sm:text-base text-center bg-colorBright border border-borderColor_primary text-red-700 py-1 px-2 rounded-xl font-semibold mx-4 text-wrap whitespace-pre-line">
                 {errorMessage}
