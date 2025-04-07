@@ -51,7 +51,7 @@ export default function Profile() {
         await updateUserProfile(oldName, newImage);
       } else {
         setIsEditing(false);
-        toast.success("Nothing to change!");
+        toast.success("Nothing to update!");
         return;
       }
       setIsEditing(false);
@@ -123,7 +123,7 @@ export default function Profile() {
             </button>
 
             {/* User Info */}
-            <div className="mt-6 text-center space-y-4">
+            <div className="mt-6 text-center space-y-4 sm:w-[80vw]">
               {isEditing ? (
                 <input
                   type="text"
@@ -150,7 +150,7 @@ export default function Profile() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col justify-center gap-4 mt-8">
+              <div className="flex flex-col justify-center gap-4 pt-8 sm:w-[60vw] sm:mx-auto">
                 {isEditing ? (
                   <button
                     onClick={handleUpdateProfile}
