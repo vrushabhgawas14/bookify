@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import {
   logoutUser,
-  // deleteUserAccount,
+  deleteUserAccount,
   updateUserProfile,
 } from "../firebase/auth";
 import { Pencil, Trash2, Camera, X, Loader2 } from "lucide-react";
@@ -56,6 +56,7 @@ export default function Profile() {
       }
       setIsEditing(false);
       toast.success("Profile updated successfully!");
+      window.location.reload();
     } catch (error) {
       toast.error("Failed to update profile");
     } finally {
@@ -66,7 +67,7 @@ export default function Profile() {
   const handleDeleteAccount = async () => {
     try {
       setIsDeleting(true);
-      // await deleteUserAccount();
+      await deleteUserAccount();
       toast.success("Account deleted successfully");
     } catch (error) {
       toast.error("Failed to delete account");
@@ -173,7 +174,7 @@ export default function Profile() {
 
                 <button
                   onClick={() => setIsDeleting(true)}
-                  className="flex items-center justify-center px-6 py-2 bg-red-800 text-white rounded-lg hover:bg-red-900 transition-colors"
+                  className="flex items-center justify-center px-6 py-2 bg-red-800/70 text-white rounded-lg hover:bg-red-900 transition-colors"
                 >
                   <Trash2 className="w-5 h-5 mr-2" />
                   Delete Account

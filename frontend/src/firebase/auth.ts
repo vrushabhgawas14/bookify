@@ -1,6 +1,8 @@
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
   GoogleAuthProvider,
+  reauthenticateWithPopup,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -9,6 +11,7 @@ import { auth, db } from "./firebase";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   query,
@@ -151,3 +154,44 @@ async function uploadImageToImgur(file: File) {
     return null;
   }
 }
+
+export const deleteUserAccount = async () => {
+  const user = auth.currentUser;
+  if (!user) throw new Error("No user logged in");
+
+  // Delete user data from Firestore
+  try {
+    const userQuery = query(
+      collection(db, "users"),
+      where("Email", "==", user.email)
+    );
+    const userDocs = await getDocs(userQuery);
+
+    if (!userDocs.empty) {
+      const userData = userDocs.docs[0].data();
+      if (userData.Provider === "google") {
+        const provider = new GoogleAuthProvider();
+        await reauthenticateWithPopup(user, provider);
+      }
+
+      const usersRef = collection(db, "deletedUser");
+      await addDoc(usersRef, {
+        FirstName: userData.FirstName,
+        LastName: userData.LastName,
+        Email: userData.Email,
+        UserImage: userData.UserImage,
+        Provider: userData.Provider,
+      });
+    }
+
+    for (const document of userDocs.docs) {
+      await deleteDoc(doc(db, "users", document.id));
+    }
+
+    // Delete user authentication
+    await deleteUser(user);
+  } catch (error: any) {
+    console.error("Error deleting account:", error.message);
+    throw error;
+  }
+};
