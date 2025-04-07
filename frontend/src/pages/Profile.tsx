@@ -130,7 +130,7 @@ export default function Profile() {
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="Enter new name"
-                  className="bg-background text-textColor_primary text-2xl text-center border border-borderColor_primary rounded-lg px-4 py-2 focus:outline-none focus:border-colorBright"
+                  className="bg-background text-textColor_primary text-2xl sm:text-xl text-center border border-borderColor_primary rounded-lg px-4 py-2 focus:outline-none focus:border-colorBright sm:w-[70vw]"
                 />
               ) : (
                 <h1 className="text-3xl font-bold text-colorBright">
