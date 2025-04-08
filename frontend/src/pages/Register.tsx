@@ -82,6 +82,7 @@ export default function Register() {
         Verified: false,
         UserImage: imageURL,
         Provider: "email",
+        isAdmin: false,
       });
 
       if (!added) {

@@ -58,6 +58,7 @@ export const doSignInWithGoogle = async () => {
           Verified: user.emailVerified,
           UserImage: user.photoURL,
           Provider: "google",
+          isAdmin: false,
         });
 
         if (!added) {
