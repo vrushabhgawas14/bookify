@@ -3,6 +3,9 @@ import { api } from "../api";
 import { useAuth } from "../context/authContext";
 import { Headphones, FileText, Brain, BookMarked, Crown } from "lucide-react";
 import AudioControl from "../components/AudioControl";
+import toast, { Toaster } from "react-hot-toast";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../firebase/firebase";
 
 export default function Home() {
   const [file, setFile] = useState(null);
@@ -18,6 +21,7 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [stopDynamicText, setStopDynamicText] = useState(false);
+  const [userInputData, setUserInputData] = useState("");
 
   const { userData, userLoggedIn } = useAuth();
 
@@ -27,6 +31,7 @@ export default function Home() {
     if (myFile) {
       setFile(myFile);
       setSelectedFileName(myFile.name);
+      setUserInputData("");
       setErrorMessage("");
       if (displayedText) {
         console.log("Result Reset Done!");
@@ -78,6 +83,7 @@ export default function Home() {
         setLoading(false);
       }
     } else if (userInput) {
+      setUserInputData(userInput.toString());
       setDisplayedText("");
       // console.log(userInput);
       try {
@@ -215,6 +221,56 @@ export default function Home() {
     );
   }
 
+  const handleDownload = async () => {
+    try {
+      if (!extractedText) {
+        toast.error("No summary to download");
+        return;
+      }
+      if (!userLoggedIn) {
+        toast.error("Please login to save summary!");
+        return;
+      }
+
+      const q = query(
+        collection(db, "users"),
+        where("Email", "==", userData.Email)
+      );
+
+      const querySnapShot = await getDocs(q);
+      if (!querySnapShot.empty) {
+        const userDataRef = querySnapShot.docs[0].ref;
+
+        const userRef = collection(userDataRef, "summaries");
+
+        await addDoc(userRef, {
+          Title: userInputData || selectedFileName || "No Title",
+          Summary: extractedText || "No Summary",
+          Email: userData.Email || "No Email",
+          createdAt: new Date().toLocaleDateString(),
+        });
+      }
+
+      toast.success("Summary saved successfully!");
+    } catch (error) {
+      console.error("Error saving summary:", error);
+      toast.error("Failed to save summary");
+    }
+  };
+
+  const handleCopy = async () => {
+    try {
+      if (extractedText) {
+        await navigator.clipboard.writeText(extractedText);
+        toast.success("Copied to clipboard!");
+      } else {
+        toast.error("Nothing to Copy!");
+      }
+    } catch (error) {
+      toast.error("Failed to copy text");
+    }
+  };
+
   return (
     <>
       <main>
@@ -298,6 +354,8 @@ export default function Home() {
             </div>
           )}
         </div>
+
+        <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
         {/* Output Section */}
         <section className="flex flex-col items-center justify-center w-full mb-10">
           <div className="w-[70vw] sm:w-[90vw] flex flex-col space-y-4 py-4">
@@ -317,16 +375,14 @@ export default function Home() {
               <header className="flex justify-between items-center border-b border-borderColor_primary py-2 px-4">
                 <h2 className="text-xl font-semibold">Summary</h2>
                 <div className="flex space-x-4">
-                  <button>
+                  <button onClick={handleDownload}>
                     <img
                       src={require("../assets/svgs/download.svg").default}
                       alt="Download"
-                      className="w-6 h-6"
+                      className="w-6 h-6 active:opacity-40"
                     />
                   </button>
-                  <button
-                    onClick={() => navigator.clipboard.writeText(extractedText)}
-                  >
+                  <button onClick={handleCopy}>
                     <img
                       src={require("../assets/svgs/copy-icon.svg").default}
                       alt="Copy"
