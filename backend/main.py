@@ -2,6 +2,7 @@ import os
 import uvicorn # type: ignore
 from fastapi import FastAPI, File, UploadFile # type: ignore
 from fastapi.middleware.cors import CORSMiddleware # type: ignore
+from cerebras.cloud.sdk import Cerebras # type: ignore
 from dotenv import load_dotenv # type: ignore
 import fitz # type: ignore # PyMuPDF
 import requests # type: ignore
@@ -16,6 +17,9 @@ app = FastAPI()
 FRONTEND_URL=os.getenv("BOOKIFY_FRONTEND_URL")
 EXTRA_URL=os.getenv("EXTRA_FRONTEND_URL")
 GROQ_API_KEY=os.getenv("GROQ_API_KEY")
+client = Cerebras(
+    api_key=os.getenv("CEREBRAS_API_KEY")
+)
 
 origins = [FRONTEND_URL,EXTRA_URL]
 
@@ -80,27 +84,51 @@ async def extract_text(file: UploadFile = File(...)):
     except Exception as e:
         return {"error": str(e)}
 
-def summarize_text(text:str) -> str:
-    GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "model": "gemma2-9b-it",  # "llama-3-8b-8192"
-        "messages": [
-            {"role": "system", "content": "You are an AI assistant that summarizes long text into concise summaries."},
-            {"role": "user", "content": f"Summarize the following text and if a text is about to be on new line then make it on new line and also avoid using bullet but use points if needed but in the new line:\n\n{text}"}
-        ],
-        "temperature": 0.7,
-        "max_tokens": 8000
-    }
+# def summarize_text_Groq(text:str) -> str:
+#     GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+#     headers = {
+#         "Authorization": f"Bearer {GROQ_API_KEY}",
+#         "Content-Type": "application/json",
+#     }
+#     payload = {
+#         "model": "gemma2-9b-it",  # "llama-3-8b-8192"
+#         "messages": [
+#             {"role": "system", "content": "You are an AI assistant that summarizes long text into concise summaries."},
+#             {"role": "user", "content": f"Summarize the following text and if a text is about to be on new line then make it on new line and also avoid using bullet but use points if needed but in the new line:\n\n{text}"}
+#         ],
+#         "temperature": 0.7,
+#         "max_tokens": 8000
+#     }
     
-    response = requests.post(GROQ_API_URL, headers=headers, data=json.dumps(payload))
-    if response.status_code == 200:
-        return response.json()["choices"][0]["message"]["content"]
-    else:
-        return f"Error: {response.text}"
+#     response = requests.post(GROQ_API_URL, headers=headers, data=json.dumps(payload))
+#     if response.status_code == 200:
+#         return response.json()["choices"][0]["message"]["content"]
+#     else:
+#         return f"Error: {response.text}"
+
+def summarize_text(text: str) -> str:
+    try:
+        stream = client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": "You are an AI assistant that summarizes long text into concise summaries."},
+                {"role": "user", "content": f"Summarize the following text and if a text is about to be on new line then make it on new line and also avoid using bullet but use points if needed but in the new line:\n\n{text}"}
+            ],
+            model="gpt-oss-120b",
+            stream=True,
+            max_completion_tokens=5000,  # adjust as needed
+            temperature=0.7,
+            top_p=1,
+            reasoning_effort="medium"
+        )
+
+        summarized_text = ""
+        for chunk in stream:
+            summarized_text += chunk.choices[0].delta.content or ""
+        return summarized_text.strip()
+
+    except Exception as e:
+        return f"Error: {str(e)}"
+
 
 # Text Queries 
 @app.post("/get-summary-of-text")
@@ -111,28 +139,50 @@ async def get_summary_of_text(data: Dict[str, str]):
 
     return {"text": formatted_text}
 
-def resolve_query(text:str) -> str:
-    GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "model": "gemma2-9b-it",  # "llama-3-8b-8192"
-        "messages": [
-            {"role": "system", "content": "You are an AI assistant that solves user queries."},
-            {"role": "user", "content": f"Most likely user will ask to Summarize the following text or anything else like chatting so the output will be a text and also avoid using bullet but use points if needed but in the new line. This was just a prerequiste to you rest depends on user input:\n\n{text}"}
-        ],
-        "temperature": 0.7,
-        "max_tokens": 8000
-    }
+# def resolve_query_groq(text:str) -> str:
+#     GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+#     headers = {
+#         "Authorization": f"Bearer {GROQ_API_KEY}",
+#         "Content-Type": "application/json",
+#     }
+#     payload = {
+#         "model": "gemma2-9b-it",  # "llama-3-8b-8192"
+#         "messages": [
+#             {"role": "system", "content": "You are an AI assistant that solves user queries."},
+#             {"role": "user", "content": f"Most likely user will ask to Summarize the following text or anything else like chatting so the output will be a text and also avoid using bullet but use points if needed but in the new line. This was just a prerequiste to you rest depends on user input:\n\n{text}"}
+#         ],
+#         "temperature": 0.7,
+#         "max_tokens": 8000
+#     }
     
-    response = requests.post(GROQ_API_URL, headers=headers, data=json.dumps(payload))
-    if response.status_code == 200:
-        return response.json()["choices"][0]["message"]["content"]
-    else:
-        return f"Error: {response.text}"
+#     response = requests.post(GROQ_API_URL, headers=headers, data=json.dumps(payload))
+#     if response.status_code == 200:
+#         return response.json()["choices"][0]["message"]["content"]
+#     else:
+#         return f"Error: {response.text}"
 
+def resolve_query(text: str) -> str:
+    try:
+        stream = client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": "You are an AI assistant that solves user queries."},
+                {"role": "user", "content": f"Most likely user will ask to Summarize the following text or anything else like chatting so the output will be a text and also avoid using bullet but use points if needed but in the new line. This was just a prerequisite to you rest depends on user input:\n\n{text}"}
+            ],
+            model="gpt-oss-120b",
+            stream=True,
+            max_completion_tokens=5000,
+            temperature=0.7,
+            top_p=1,
+            reasoning_effort="medium"
+        )
+
+        resolved_text = ""
+        for chunk in stream:
+            resolved_text += chunk.choices[0].delta.content or ""
+        return resolved_text.strip()
+
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 def format_text_with_line_breaks(text):
     
@@ -163,4 +213,15 @@ def calculate_char(text, displayText):
     print("Tokens: ", len(text) / 4,"\n\n")
     
 
-# uvicorn main:app --reload
+### Running Backend in Local
+
+# touch app.py
+# python -m venv venv
+# venv/Scripts/activate
+# - pip install uvicorn
+# - pip install fastapi
+# - pip install python-dotenv
+# - pip install pymupdf
+# uvicorn main:app --reload  (It will generate __pycache__)
+# pip freeze > requirements.txt
+# pip install -r .\requirements.txt

@@ -147,6 +147,17 @@ export default function Home() {
     containerRef.current?.addEventListener("wheel", handleScroll);
     containerRef.current?.addEventListener("touchmove", handleScroll);
 
+    const loadBackend = async () => {
+      try {
+        const response = await api.get("/");
+        console.log("Backend Loaded with : ", response.statusText);
+      } catch {
+        console.log("Failed to Load Backend");
+      }
+    };
+
+    loadBackend();
+
     return () => {
       containerRef.current?.removeEventListener("wheel", handleScroll);
       containerRef.current?.removeEventListener("touchmove", handleScroll);
