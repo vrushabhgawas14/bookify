@@ -16,7 +16,6 @@ app = FastAPI()
 
 FRONTEND_URL=os.getenv("BOOKIFY_FRONTEND_URL")
 EXTRA_URL=os.getenv("EXTRA_FRONTEND_URL")
-GROQ_API_KEY=os.getenv("GROQ_API_KEY")
 client = Cerebras(
     api_key=os.getenv("CEREBRAS_API_KEY")
 )
@@ -87,28 +86,6 @@ async def extract_text(file: UploadFile = File(...)):
     except Exception as e:
         return {"error": str(e)}
 
-# def summarize_text_Groq(text:str) -> str:
-#     GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-#     headers = {
-#         "Authorization": f"Bearer {GROQ_API_KEY}",
-#         "Content-Type": "application/json",
-#     }
-#     payload = {
-#         "model": "gemma2-9b-it",  # "llama-3-8b-8192"
-#         "messages": [
-#             {"role": "system", "content": "You are an AI assistant that summarizes long text into concise summaries."},
-#             {"role": "user", "content": f"Summarize the following text and if a text is about to be on new line then make it on new line and also avoid using bullet but use points if needed but in the new line:\n\n{text}"}
-#         ],
-#         "temperature": 0.7,
-#         "max_tokens": 8000
-#     }
-    
-#     response = requests.post(GROQ_API_URL, headers=headers, data=json.dumps(payload))
-#     if response.status_code == 200:
-#         return response.json()["choices"][0]["message"]["content"]
-#     else:
-#         return f"Error: {response.text}"
-
 def summarize_text(text: str) -> str:
     try:
         stream = client.chat.completions.create(
@@ -142,27 +119,6 @@ async def get_summary_of_text(data: Dict[str, str]):
 
     return {"text": formatted_text}
 
-# def resolve_query_groq(text:str) -> str:
-#     GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-#     headers = {
-#         "Authorization": f"Bearer {GROQ_API_KEY}",
-#         "Content-Type": "application/json",
-#     }
-#     payload = {
-#         "model": "gemma2-9b-it",  # "llama-3-8b-8192"
-#         "messages": [
-#             {"role": "system", "content": "You are an AI assistant that solves user queries."},
-#             {"role": "user", "content": f"Most likely user will ask to Summarize the following text or anything else like chatting so the output will be a text and also avoid using bullet but use points if needed but in the new line. This was just a prerequiste to you rest depends on user input:\n\n{text}"}
-#         ],
-#         "temperature": 0.7,
-#         "max_tokens": 8000
-#     }
-    
-#     response = requests.post(GROQ_API_URL, headers=headers, data=json.dumps(payload))
-#     if response.status_code == 200:
-#         return response.json()["choices"][0]["message"]["content"]
-#     else:
-#         return f"Error: {response.text}"
 
 def resolve_query(text: str) -> str:
     try:
