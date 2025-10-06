@@ -36,6 +36,10 @@ export const loginUserWithEmailAndPassword = (
 export const doSignInWithGoogle = async () => {
   const provider = new GoogleAuthProvider();
 
+  provider.setCustomParameters({
+    prompt: "select_account",
+  });
+
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;

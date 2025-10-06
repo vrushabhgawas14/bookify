@@ -35,6 +35,9 @@ app.add_middleware(
 def main():
     return True
 
+@app.get("/health")
+def health():
+    return {"status" : "ok"}
 
 @app.post("/extract-text")
 async def extract_text(file: UploadFile = File(...)):
